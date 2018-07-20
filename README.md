@@ -36,10 +36,10 @@ This package helps you authenticate users on a Laravel API based on JWT tokens g
 
 1. In another moment, the user make a request to some endpoint on a Laravel API, with that token.
 
-1. The Laravel API (through Simple Keycloak Guard) validate the user based on that token.
+1. The Laravel API (through Simple Keycloak Guard) validates the user based on that token.
    - is this a trustable token?
    - Is this a valid token?
-   - Is this expired token?
+   - Is this a expired token?
    - Find the user on database and authenticate it.
    - Process the request
 
