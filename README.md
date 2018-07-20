@@ -32,9 +32,9 @@ This package helps you authenticate users on a Laravel API based on JWT tokens g
 # How does it work
 
 
-1. The user authenticates on Keycloak Server and obtains a JWT token.
+1. The frontend user authenticates on Keycloak Server and obtains a JWT token.
 
-1. In another moment, the user make a request to some endpoint on a Laravel API, with that token.
+1. In another moment, the frontend user makes a request to some endpoint on a Laravel API, with that token.
 
 1. The Laravel API (through Simple Keycloak Guard) validates the user based on that token.
    - is this a trustable token?
