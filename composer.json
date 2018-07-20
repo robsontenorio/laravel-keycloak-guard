@@ -1,0 +1,27 @@
+{
+    "name": "robsontenorio/laravel-keycloak-guard",
+    "description": "Simple Keycloak Guard for Laravel",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Robson Tenório",
+            "email": "rrtenorio@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "firebase/php-jwt": "^5.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "KeycloakGuard\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "KeycloakGuard\\KeycloakGuardServiceProvider"
+            ]
+        }
+    }
+}
