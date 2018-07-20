@@ -19,7 +19,7 @@ This package helps you authenticate users on a Laravel API based on JWT tokens g
 
 ✔️ I will not use Laravel Passport, because Keycloak Server will do the job.
 
-✔️ The frontend is separated project.
+✔️ The frontend is a separated project.
 
 ✔️ The frontend users authenticate **directly on Keycloak Server** to obtain a JWT token. This process have nothing to do with the Laravel API.
 
