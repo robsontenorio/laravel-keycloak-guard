@@ -10,18 +10,18 @@
 
 # Simple Keycloak Guard for Laravel
 
-This packages helps you authenticate users on a Laravel API based on JWT tokens generated from  **Keycloak Server**.
+This package helps you authenticate users on a Laravel API based on JWT tokens generated from  **Keycloak Server**.
 
 
 # Requirements
 
-✔️ I`m building a API with Laravel. 
+✔️ I`m building an API with Laravel. 
 
 ✔️ I will not use Laravel Passport, because Keycloak Server will do the job.
 
 ✔️ The frontend is separated project.
 
-✔️ The frontend users authenticate **directly on Keycloak Server** to obtain a JWT token. This process have nothing to do with the backend.
+✔️ The frontend users authenticate **directly on Keycloak Server** to obtain a JWT token. This process have nothing to do with the Laravel API.
 
 ✔️ The frontend keep the JWT token.
 
@@ -31,14 +31,13 @@ This packages helps you authenticate users on a Laravel API based on JWT tokens 
 
 # How does it work
 
-{ imagem ilustrativa. frontend autentica no keycloak. depois frontend consulta backend enviando token jwt, e keycloak guard valida }
 
 1. The user authenticates on Keycloak Server and obtains a JWT token.
 
 1. In another moment, the user make a request to some endpoint on a Laravel API, with that token.
 
 1. The Laravel API (through Simple Keycloak Guard) validate the user based on that token.
-   - is this trustable token?
+   - is this a trustable token?
    - Is this a valid token?
    - Is this expired token?
    - Find the user on database and authenticate it.
@@ -83,23 +82,23 @@ The Keycloack Server realm public key (RSA256 format).
 **user_provider_credential**
 
 
-The field from `User` model the contains the user unique identifer (eg.  `username`, `email`, `nickname`). 
+The field from `users` table that contains the user unique identifier (eg.  `username`, `email`, `nickname`). 
 
 **token_principal_attribute**
 
-The JWT token property that contains the user identifier. 
+The property from JWT token that contains the user identifier. 
 This will be confronted against  `user_provider_credential` attribute.
 
 **decode_user_details**
 
-Appends to the authenticated user the full decode JWT token. Useful if you need to kwnow roles, groups and another user info holded by JWT token.
+Appends to the authenticated user the full decoded JWT token. Useful if you need to kwnow roles, groups and another user info holded by JWT token.
 
 ## Laravel auth config
 
 Changes on `config/auth.php`
 ```php
 'defaults' => [
-        'guard' => 'api', # <-- For sure, i`m building a API
+        'guard' => 'api', # <-- For sure, i`m building an API
         'passwords' => 'users',
     ],
 
