@@ -116,7 +116,7 @@ This will be confronted against  `user_provider_credential` attribute, while aut
 
 *Default is `false`.*
 
-Appends to the authenticated user the full decoded JWT token. Useful if you need to know roles, groups and another user info holded by JWT token. You can also get it using `Auth::token()`, see API section.
+Appends to the authenticated user the full decoded JWT token. Useful if you need to know roles, groups and another user info holded by JWT token. Even you choose `false`, you can also get it using `Auth::token()`, see API section.
 
 ✔️ **allowed_resources**
 
