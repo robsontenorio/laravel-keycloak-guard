@@ -96,7 +96,7 @@ return [
 
 *Required.*
 
-The Keycloack Server realm public key (RSA256 format).
+The Keycloack Server realm public key (string).
 
 ✔️ **user_provider_credential** 
 
