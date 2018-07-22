@@ -5,6 +5,9 @@ use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Http\Request;
+use KeycloakGuard\Exceptions\TokenException;
+use KeycloakGuard\Exceptions\UserNotFoundException;
+use KeycloakGuard\Exceptions\ResourceAccessNotAllowedException;
 
 class KeycloakGuard implements Guard
 {
@@ -18,7 +21,25 @@ class KeycloakGuard implements Guard
     $this->config = config('keycloak');
     $this->user = null;
     $this->provider = $provider;
-    $this->decodedToken = Token::decode($request->bearerToken(), $this->config['realm_public_key']);
+    $this->decodedToken = null;
+    $this->request = $request;
+
+    $this->authenticate();
+  }
+
+  /**
+   * Decode token, validate and authenticate user
+   *
+   * @return mixed
+   */
+
+  private function authenticate()
+  {
+    try {
+      $this->decodedToken = Token::decode($this->request->bearerToken(), $this->config['realm_public_key']);
+    } catch (\Exception $e) {
+      throw new TokenException($e->getMessage());
+    }
 
     if ($this->decodedToken) {
       $this->validate([
@@ -26,6 +47,7 @@ class KeycloakGuard implements Guard
       ]);
     }
   }
+
 
   /**
    * Determine if the current user is authenticated.
@@ -93,6 +115,10 @@ class KeycloakGuard implements Guard
 
     $user = $this->provider->retrieveByCredentials($credentials);
 
+    if (!$user) {
+      throw new UserNotFoundException("User not found. Credentials: " . json_encode($credentials));
+    }
+
     $this->setUser($user);
 
     return true;
@@ -122,7 +148,7 @@ class KeycloakGuard implements Guard
     $allowed_resources = explode(',', $this->config['allowed_resources']);
 
     if (count(array_intersect($token_resource_access, $allowed_resources)) == 0) {
-      throw new ResourceNotAllowedException("The decoded JWT token has not a valid resource_access allowed by API. Allowed resources by API: " . $this->config['allowed_resources']);
+      throw new ResourceAccessNotAllowedException("The decoded JWT token has not a valid `resource_access` allowed by API. Allowed resources by API: " . $this->config['allowed_resources']);
     }
   }
 
