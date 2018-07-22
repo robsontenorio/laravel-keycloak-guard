@@ -33,10 +33,16 @@ This package helps you authenticate users on a Laravel API based on JWT tokens g
 
 # The flow
 
+<p align="center">
+  <img src="flow.png">  
+</p>
 
-1. The frontend user authenticates on Keycloak Server and obtains a JWT token.
 
-1. In another moment, the frontend user makes a request to some endpoint on a Laravel API, with that token.
+1. The frontend user authenticates on Keycloak Server 
+
+1. The frontend user obtains a JWT token.
+
+1. In another moment, the frontend user makes a request to some protected endpoint on a Laravel API, with that token.
 
 1. The Laravel API (through `Keycloak Guard`) handle it.
    - Verify token signature.
@@ -45,6 +51,8 @@ This package helps you authenticate users on a Laravel API based on JWT tokens g
    - Verify if my API allows `resource access` from token.
 
 1. If everything is ok, find the user on database and authenticate it on my API.
+
+1. Return response
 
 # Install
 
