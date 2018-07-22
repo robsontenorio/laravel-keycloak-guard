@@ -17,31 +17,34 @@ This package helps you authenticate users on a Laravel API based on JWT tokens g
 
 ✔️ I`m building an API with Laravel. 
 
-✔️ I will not use Laravel Passport, because Keycloak Server will do the job.
+✔️ I will not use Laravel Passport for authentication, because Keycloak Server will do the job.
+
+✔️ I already have an "users table", with unique identifiers, on my database.
 
 ✔️ The frontend is a separated project.
 
 ✔️ The frontend users authenticate **directly on Keycloak Server** to obtain a JWT token. This process have nothing to do with the Laravel API.
 
-✔️ The frontend keep the JWT token.
+✔️ The frontend keep the JWT token from Keycloak Server.
 
-✔️ The frontend make requests to the backend with that token.
+✔️ The frontend make requests to the Laravel API, with that token.
 
 
 
-# How does it work
+# The flow
 
 
 1. The frontend user authenticates on Keycloak Server and obtains a JWT token.
 
 1. In another moment, the frontend user makes a request to some endpoint on a Laravel API, with that token.
 
-1. The Laravel API (through Simple Keycloak Guard) validates the user based on that token.
-   - is this a trustable token?
-   - Is this a valid token?
-   - Is this a expired token?
-   - Find the user on database and authenticate it.
-   - Process the request
+1. The Laravel API (through `Keycloak Guard`) handle it.
+   - Verify token signature.
+   - Verify token structure.
+   - Verify token expiration time.
+   - Verify if my API allows `resource access` from token.
+
+1. If everything is ok, find the user on database and authenticate it on my API.
 
 # Install
 
@@ -60,38 +63,58 @@ php artisan vendor:publish  --provider="KeycloakGuard\KeycloakGuardServiceProvid
 
 # Configuration
 
-## Keycloack guard config
+## Keycloack Guard 
 
-Note that `config/keycloak.php` support `.env` files.
+The Keycloak Guard configuration can be handled from Laravel `.env` file. ⚠️ Be sure all strings **are trimmed.**
+
 ```php
 <?php 
 
 return [  
   'realm_public_key' => env('KEYCLOAK_REALM_PUBLIC_KEY', null),
-  'user_provider_credential' => env('KEYCLOAK_USER_PROVIDER_CREDENTIAL', null),
-  'token_principal_attribute' => env('KEYCLOAK_TOKEN_PRINCIPAL_ATTRIBUTE', null),
-  'decode_user_details' => env('KEYCLOAK_DECODE_USER_DETAILS', true)
+
+  'user_provider_credential' => env('KEYCLOAK_USER_PROVIDER_CREDENTIAL', 'username'),
+
+  'token_principal_attribute' => env('KEYCLOAK_TOKEN_PRINCIPAL_ATTRIBUTE', 'preferred_username'),
+
+  'append_decoded_token' => env('KEYCLOAK_APPEND_DECODED_TOKEN', true),
+
+  'allowed_resources' => env('KEYCLOAK_ALLOWED_RESOURCES', null)
 ];
 
 ```
 
-**realm_public_key**
+✔️  **realm_public_key**
+
+*Required.*
 
 The Keycloack Server realm public key (RSA256 format).
 
-**user_provider_credential**
+✔️ **user_provider_credential** 
+
+*Required. Default is `username`.*
 
 
-The field from `users` table that contains the user unique identifier (eg.  `username`, `email`, `nickname`). 
+Any field from "users" table that contains the user unique identifier (eg.  username, email, nickname). This will be confronted against  `token_principal_attribute` attribute, while authenticating.
 
-**token_principal_attribute**
+✔️ **token_principal_attribute**
+
+*Required. Default is `preferred_username`.*
 
 The property from JWT token that contains the user identifier. 
-This will be confronted against  `user_provider_credential` attribute.
+This will be confronted against  `user_provider_credential` attribute, while authenticating.
 
-**decode_user_details**
+✔️ **append_decoded_token**
 
-Appends to the authenticated user the full decoded JWT token. Useful if you need to kwnow roles, groups and another user info holded by JWT token.
+*Default is `false`.*
+
+Appends to the authenticated user the full decoded JWT token. Useful if you need to know roles, groups and another user info holded by JWT token. You can also get it using `Auth::token()`, see API section.
+
+✔️ **allowed_resources**
+
+*Required*
+
+Comma separated list of allowed resources accepted by API. This attribute will be confronted against `resource_access` attribute from JWT token, while authenticating.
 
 ## Laravel auth config
 
@@ -109,3 +132,26 @@ Changes on `config/auth.php`
         ],
     ],
 ```
+
+# API
+
+Simple Keycloak Guard implements `Illuminate\Contracts\Auth\Guard`. So, all Laravel default methods will be available. 
+
+Default methods: 
+
+- check()
+- guest()
+- user()
+- id()
+- validate()
+- setUser()
+
+Ex: `Auth::user()` return the authenticated user.
+
+# Keycloak Guard
+
+Methods from Keycloak Guard:
+
+- token()
+
+Ex: `Auth::token()`, returns full decoded JWT token from authenticated user
