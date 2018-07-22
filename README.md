@@ -143,9 +143,9 @@ Changes on `config/auth.php`
 
 # API
 
-Simple Keycloak Guard implements `Illuminate\Contracts\Auth\Guard`. So, all Laravel default methods will be available. 
+Simple Keycloak Guard implements `Illuminate\Contracts\Auth\Guard`. So, all Laravel default methods will be available. Ex: `Auth::user()` returns the authenticated user.
 
-Default methods: 
+### Default methods: 
 
 - check()
 - guest()
@@ -154,12 +154,9 @@ Default methods:
 - validate()
 - setUser()
 
-Ex: `Auth::user()` return the authenticated user.
 
-# Keycloak Guard
-
-Methods from Keycloak Guard:
+### Keycloak Guard methods:
 
 - token()
 
-Ex: `Auth::token()`, returns full decoded JWT token from authenticated user
+Ex: `Auth::token()` returns full decoded JWT token from authenticated user
