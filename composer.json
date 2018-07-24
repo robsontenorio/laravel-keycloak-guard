@@ -1,0 +1,44 @@
+{
+    "name": "robsontenorio/laravel-keycloak-guard",
+    "description": "🔑 Simple Keycloak Guard for Laravel",
+    "keywords": [
+        "laravel",
+        "keycloak"
+    ],
+    "homepage": "https://github.com/robsontenorio/laravel-keycloak-guard",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Robson Tenório"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "firebase/php-jwt": "^5.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "KeycloakGuard\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "KeycloakGuard\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "phpunit --coverage-html coverage"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "KeycloakGuard\\KeycloakGuardServiceProvider"
+            ]
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.3@dev",
+        "orchestra/testbench": "^3.7@dev"
+    }
+}
