@@ -39,7 +39,7 @@ class TestCase extends Orchestra
 
     $this->token = JWT::encode($this->payload, $this->privateKey, 'RS256');
 
-    // Set Keycloack Guard default configs
+    // Set Keycloak Guard default configs
 
     config(['keycloak.realm_public_key' => $this->plainPublicKey($this->publicKey)]);
     config(['keycloak.user_provider_credential' => 'username']);
