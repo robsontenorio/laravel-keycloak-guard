@@ -71,7 +71,7 @@ php artisan vendor:publish  --provider="KeycloakGuard\KeycloakGuardServiceProvid
 
 # Configuration
 
-## Keycloack Guard 
+## Keycloak Guard 
 
 The Keycloak Guard configuration can be handled from Laravel `.env` file. ⚠️ Be sure all strings **are trimmed.**
 
@@ -96,7 +96,7 @@ return [
 
 *Required.*
 
-The Keycloack Server realm public key (string).
+The Keycloak Server realm public key (string).
 
 ✔️ **user_provider_credential** 
 
@@ -135,7 +135,7 @@ Changes on `config/auth.php`
 
     'guards' => [
         'api' => [
-            'driver' => 'keycloak', # <-- Set the API guard to "keycloack"
+            'driver' => 'keycloak', # <-- Set the API guard driver to "keycloak"
             'provider' => 'users',
         ],
     ],
