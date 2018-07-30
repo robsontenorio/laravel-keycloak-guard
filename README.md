@@ -124,7 +124,7 @@ Appends to the authenticated user the full decoded JWT token. Useful if you need
 
 Usually you API should handle one *resource_access*. But, if you handle multiples, just use a comma separated list of allowed resources accepted by API. This attribute will be confronted against `resource_access` attribute from JWT token, while authenticating.
 
-## Laravel auth config
+## Laravel Auth
 
 Changes on `config/auth.php`
 ```php
@@ -140,6 +140,23 @@ Changes on `config/auth.php`
         ],
     ],
 ```
+
+## Laravel Routes
+Just protect some endpoints on `routes/api.php` and you are done!
+
+```php
+// public endpoints
+Route::get('/hello', function () {
+    return ':)';
+});
+
+// protected endpoints
+Route::group(['middleware' => 'auth:api'], function () {
+    Route::get('/protected-endpoint', 'SecretController@index');
+    // more endpoints ...
+});
+```
+
 
 # API
 
