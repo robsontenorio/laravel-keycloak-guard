@@ -26,6 +26,6 @@ class Token
    */
   private static function buildPublicKey(string $key)
   {
-    return "-----BEGIN PUBLIC KEY-----\n{$key}\n-----END PUBLIC KEY-----";
+    return "-----BEGIN PUBLIC KEY-----\n" . wordwrap($key, 64, "\n", true) . "\n-----END PUBLIC KEY-----";
   }
 }
