@@ -170,7 +170,6 @@ Simple Keycloak Guard implements `Illuminate\Contracts\Auth\Guard`. So, all Lara
 - id()
 - validate()
 - setUser()
-- hasRole('some-resource', 'some-role'): Check if the authenticated user has especific role into a resource.
 
 
 ### Keycloak Guard methods:
@@ -178,6 +177,10 @@ Simple Keycloak Guard implements `Illuminate\Contracts\Auth\Guard`. So, all Lara
 - token()
 
 Ex: `Auth::token()` returns full decoded JWT token from authenticated user
+
+- hasRole('some-resource', 'some-role')
+
+Ex: `Auth::hasRole('frontend', 'internal-user')` Check if the authenticated user has especific `internal-user` role into a `frontend` resource.
 
 # Contact
 
