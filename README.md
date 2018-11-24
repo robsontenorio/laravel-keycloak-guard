@@ -178,9 +178,30 @@ Simple Keycloak Guard implements `Illuminate\Contracts\Auth\Guard`. So, all Lara
 
 Ex: `Auth::token()` returns full decoded JWT token from authenticated user
 
-- hasRole('some-resource', 'some-role')
+- hasRole('some-resource', 'some-role'):  Check if the authenticated user has especific role into a resource.
 
-Ex: `Auth::hasRole('frontend', 'internal-user')` Check if the authenticated user has especific `internal-user` role into a `frontend` resource.
+Ex:
+Whit this payload:
+
+```
+'resource_access' => [
+  'myapp-backend' => [
+      'roles' => [
+        'myapp-backend-role1',
+        'myapp-backend-role2'
+      ]
+  ],
+  'myapp-frontend' => [
+    'roles' => [
+      'myapp-frontend-role1',
+      'myapp-frontend-role2'
+    ]
+  ]
+]
+```
+`Auth::token('myapp-backend', 'myapp-backend-role1') => true`
+`Auth::token('myapp-frontend', 'myapp-frontend-role1') => true`
+`Auth::token('myapp-backend', 'myapp-frontend-role1') => false`
 
 # Contact
 

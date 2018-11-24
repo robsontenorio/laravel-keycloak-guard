@@ -85,4 +85,78 @@ class AuthenticateTest extends TestCase
 
     $this->assertNull(Auth::user()->token);
   }
+
+  /** @test */
+  public function it_check_user_has_role_in_resource()
+  {
+    $this->buildCustomToken([
+      'resource_access' => [
+        'myapp-backend' => [
+            'roles' => [
+              'myapp-backend-role1',
+              'myapp-backend-role2'
+            ]
+        ],
+        'myapp-frontend' => [
+          'roles' => [
+            'myapp-frontend-role1',
+            'myapp-frontend-role2'
+          ]
+        ]
+      ]
+    ]);
+
+    $response = $this->withToken()->json('GET', '/foo/secret');
+    $this->assertTrue(Auth::hasRole('myapp-backend', 'myapp-backend-role1'));
+  }
+
+  /** @test */
+  public function it_check_user_no_has_role_in_resource()
+  {
+    $this->buildCustomToken([
+      'resource_access' => [
+        'myapp-backend' => [
+            'roles' => [
+              'myapp-backend-role1',
+              'myapp-backend-role2'
+            ]
+        ],
+        'myapp-frontend' => [
+          'roles' => [
+            'myapp-frontend-role1',
+            'myapp-frontend-role2'
+          ]
+        ]
+      ]
+    ]);
+
+    $response = $this->withToken()->json('GET', '/foo/secret');
+    $this->assertFalse(Auth::hasRole('myapp-backend', 'myapp-backend-role3'));
+  }
+
+  /** @test */
+  public function it_prevent_cross_roles_resources()
+  {
+    $this->buildCustomToken([
+      'resource_access' => [
+        'myapp-backend' => [
+            'roles' => [
+              'myapp-backend-role1',
+              'myapp-backend-role2'
+            ]
+        ],
+        'myapp-frontend' => [
+          'roles' => [
+            'myapp-frontend-role1',
+            'myapp-frontend-role2'
+          ]
+        ]
+      ]
+    ]);
+
+    $response = $this->withToken()->json('GET', '/foo/secret');
+    $this->assertFalse(Auth::hasRole('myapp-backend', 'myapp-frontend-role1'));
+  }
+
+
 }

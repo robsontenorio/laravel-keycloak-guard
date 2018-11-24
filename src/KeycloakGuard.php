@@ -181,7 +181,7 @@ class KeycloakGuard implements Guard
   public function hasRole($resource, $role) {
      $token_resource_access = (array) $this->decodedToken->resource_access;
      if(array_key_exists($resource, $token_resource_access)) {
-         $token_resource_values = (array)$token_resource_access['frontend'];
+         $token_resource_values = (array)$token_resource_access[$resource];
 
          if(array_key_exists('roles', $token_resource_values) &&
              in_array($role, $token_resource_values['roles'])) {
