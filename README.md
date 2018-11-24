@@ -200,9 +200,9 @@ Whit this payload:
 ]
 ```
 ```
-Auth::token('myapp-backend', 'myapp-backend-role1') => true
-Auth::token('myapp-frontend', 'myapp-frontend-role1') => true
-Auth::token('myapp-backend', 'myapp-frontend-role1') => false
+Auth::hasRole('myapp-backend', 'myapp-backend-role1') => true
+Auth::hasRole('myapp-frontend', 'myapp-frontend-role1') => true
+Auth::hasRole('myapp-backend', 'myapp-frontend-role1') => false
 ```
 
 # Contact
