@@ -15,7 +15,7 @@ This package helps you authenticate users on a Laravel API based on JWT tokens g
 
 # Requirements
 
-✔️ I`m building an API with Laravel. 
+✔️ I`m building an API with Laravel.
 
 ✔️ I will not use Laravel Passport for authentication, because Keycloak Server will do the job.
 
@@ -38,7 +38,7 @@ This package helps you authenticate users on a Laravel API based on JWT tokens g
 </p>
 
 
-1. The frontend user authenticates on Keycloak Server 
+1. The frontend user authenticates on Keycloak Server
 
 1. The frontend user obtains a JWT token.
 
@@ -65,18 +65,18 @@ composer require robsontenorio/laravel-keycloak-guard
 Publish the config file
 
 ```
-php artisan vendor:publish  --provider="KeycloakGuard\KeycloakGuardServiceProvider" 
+php artisan vendor:publish  --provider="KeycloakGuard\KeycloakGuardServiceProvider"
 
 ```
 
 # Configuration
 
-## Keycloak Guard 
+## Keycloak Guard
 
 The Keycloak Guard configuration can be handled from Laravel `.env` file. ⚠️ Be sure all strings **are trimmed.**
 
 ```php
-<?php 
+<?php
 
 return [  
   'realm_public_key' => env('KEYCLOAK_REALM_PUBLIC_KEY', null),
@@ -98,7 +98,7 @@ return [
 
 The Keycloak Server realm public key (string).
 
-✔️ **user_provider_credential** 
+✔️ **user_provider_credential**
 
 *Required. Default is `username`.*
 
@@ -109,7 +109,7 @@ Any field from "users" table that contains the user unique identifier (eg.  user
 
 *Required. Default is `preferred_username`.*
 
-The property from JWT token that contains the user identifier. 
+The property from JWT token that contains the user identifier.
 This will be confronted against  `user_provider_credential` attribute, while authenticating.
 
 ✔️ **append_decoded_token**
@@ -162,7 +162,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 
 Simple Keycloak Guard implements `Illuminate\Contracts\Auth\Guard`. So, all Laravel default methods will be available. Ex: `Auth::user()` returns the authenticated user.
 
-### Default methods: 
+### Default methods:
 
 - check()
 - guest()
@@ -177,6 +177,33 @@ Simple Keycloak Guard implements `Illuminate\Contracts\Auth\Guard`. So, all Lara
 - token()
 
 Ex: `Auth::token()` returns full decoded JWT token from authenticated user
+
+- hasRole('some-resource', 'some-role'):  Check if the authenticated user has especific role into a resource.
+
+Ex:
+Whit this payload:
+
+```
+'resource_access' => [
+  'myapp-backend' => [
+      'roles' => [
+        'myapp-backend-role1',
+        'myapp-backend-role2'
+      ]
+  ],
+  'myapp-frontend' => [
+    'roles' => [
+      'myapp-frontend-role1',
+      'myapp-frontend-role2'
+    ]
+  ]
+]
+```
+```
+Auth::hasRole('myapp-backend', 'myapp-backend-role1') => true
+Auth::hasRole('myapp-frontend', 'myapp-frontend-role1') => true
+Auth::hasRole('myapp-backend', 'myapp-frontend-role1') => false
+```
 
 # Contact
 
