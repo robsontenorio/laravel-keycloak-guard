@@ -123,10 +123,15 @@ class KeycloakGuard implements Guard
 
     $this->validateResources();
 
-    $user = $this->provider->retrieveByCredentials($credentials);
+    if ($this->config['load_user_from_database']) {
+      $user = $this->provider->retrieveByCredentials($credentials);
 
-    if (!$user) {
-      throw new UserNotFoundException("User not found. Credentials: " . json_encode($credentials));
+      if (!$user) {
+        throw new UserNotFoundException("User not found. Credentials: " . json_encode($credentials));
+      }
+    } else {
+      $class = $this->provider->getModel();
+      $user = new $class();
     }
 
     $this->setUser($user);
@@ -173,21 +178,22 @@ class KeycloakGuard implements Guard
   }
 
   /**
-  * Check if authenticated user has a especific role into resource
-  * @param string $resource
-  * @param string $role
-  * @return bool
-  */
-  public function hasRole($resource, $role) {
-     $token_resource_access = (array) $this->decodedToken->resource_access;
-     if(array_key_exists($resource, $token_resource_access)) {
-         $token_resource_values = (array)$token_resource_access[$resource];
+   * Check if authenticated user has a especific role into resource
+   * @param string $resource
+   * @param string $role
+   * @return bool
+   */
+  public function hasRole($resource, $role)
+  {
+    $token_resource_access = (array)$this->decodedToken->resource_access;
+    if (array_key_exists($resource, $token_resource_access)) {
+      $token_resource_values = (array)$token_resource_access[$resource];
 
-         if(array_key_exists('roles', $token_resource_values) &&
-             in_array($role, $token_resource_values['roles'])) {
-             return true;
-         }
-     }
-     return false;
+      if (array_key_exists('roles', $token_resource_values) &&
+        in_array($role, $token_resource_values['roles'])) {
+        return true;
+      }
+    }
+    return false;
   }
 }

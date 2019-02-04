@@ -87,15 +87,37 @@ class AuthenticateTest extends TestCase
   }
 
   /** @test */
+  public function it_does_not_load_user_from_database()
+  {
+    config(['keycloak.load_user_from_database' => false]);
+
+    $response = $this->withToken()->json('GET', '/foo/secret');
+
+    $this->assertEquals(count(Auth::user()->getAttributes()), 0);
+  }
+
+  /** @test */
+  public function it_does_not_load_user_from_database_but_appends_decoded_token()
+  {
+    config(['keycloak.load_user_from_database' => false]);
+    config(['keycloak.append_decoded_token' => true]);
+
+    $response = $this->withToken()->json('GET', '/foo/secret');
+
+    $this->assertArrayHasKey('token', Auth::user()->toArray());
+  }
+
+
+  /** @test */
   public function it_check_user_has_role_in_resource()
   {
     $this->buildCustomToken([
       'resource_access' => [
         'myapp-backend' => [
-            'roles' => [
-              'myapp-backend-role1',
-              'myapp-backend-role2'
-            ]
+          'roles' => [
+            'myapp-backend-role1',
+            'myapp-backend-role2'
+          ]
         ],
         'myapp-frontend' => [
           'roles' => [
@@ -116,10 +138,10 @@ class AuthenticateTest extends TestCase
     $this->buildCustomToken([
       'resource_access' => [
         'myapp-backend' => [
-            'roles' => [
-              'myapp-backend-role1',
-              'myapp-backend-role2'
-            ]
+          'roles' => [
+            'myapp-backend-role1',
+            'myapp-backend-role2'
+          ]
         ],
         'myapp-frontend' => [
           'roles' => [
@@ -140,10 +162,10 @@ class AuthenticateTest extends TestCase
     $this->buildCustomToken([
       'resource_access' => [
         'myapp-backend' => [
-            'roles' => [
-              'myapp-backend-role1',
-              'myapp-backend-role2'
-            ]
+          'roles' => [
+            'myapp-backend-role1',
+            'myapp-backend-role2'
+          ]
         ],
         'myapp-frontend' => [
           'roles' => [

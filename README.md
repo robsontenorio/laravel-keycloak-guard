@@ -19,8 +19,6 @@ This package helps you authenticate users on a Laravel API based on JWT tokens g
 
 ✔️ I will not use Laravel Passport for authentication, because Keycloak Server will do the job.
 
-✔️ I already have an "users table", with unique identifiers, on my database.
-
 ✔️ The frontend is a separated project.
 
 ✔️ The frontend users authenticate **directly on Keycloak Server** to obtain a JWT token. This process have nothing to do with the Laravel API.
@@ -81,6 +79,8 @@ The Keycloak Guard configuration can be handled from Laravel `.env` file. ⚠️
 return [  
   'realm_public_key' => env('KEYCLOAK_REALM_PUBLIC_KEY', null),
 
+  'load_user_from_database' => env('KEYCLOAK_LOAD_USER_FROM_DATABASE', true),
+
   'user_provider_credential' => env('KEYCLOAK_USER_PROVIDER_CREDENTIAL', 'username'),
 
   'token_principal_attribute' => env('KEYCLOAK_TOKEN_PRINCIPAL_ATTRIBUTE', 'preferred_username'),
@@ -98,12 +98,20 @@ return [
 
 The Keycloak Server realm public key (string).
 
+✔️ **load_user_from_database**
+
+*Required. Default is `true`.*
+
+If you do not have an `users` table you must disable this.
+
+It fetchs user from database and fill values into authenticated user object. If enabled, it will work together with `user_provider_credential` and `user_provider_credential`.
+
 ✔️ **user_provider_credential**
 
 *Required. Default is `username`.*
 
 
-Any field from "users" table that contains the user unique identifier (eg.  username, email, nickname). This will be confronted against  `token_principal_attribute` attribute, while authenticating.
+The field from "users" table that contains the user unique identifier (eg.  username, email, nickname). This will be confronted against  `token_principal_attribute` attribute, while authenticating.
 
 ✔️ **token_principal_attribute**
 
