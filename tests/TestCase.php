@@ -12,7 +12,7 @@ use Illuminate\Auth\Middleware\Authenticate;
 
 class TestCase extends Orchestra
 {
-  protected function setUp()
+  protected function setUp() : void
   {
     parent::setUp();    
     

@@ -15,7 +15,7 @@ use KeycloakGuard\Exceptions\ResourceAccessNotAllowedException;
 class AuthenticateTest extends TestCase
 {
 
-  protected function setUp()
+  protected function setUp() : void
   {
     parent::setUp();
   }
