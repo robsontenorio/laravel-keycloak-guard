@@ -159,7 +159,7 @@ class KeycloakGuard implements Guard
    */
   private function validateResources()
   {
-    $token_resource_access = array_keys((array)$this->decodedToken->resource_access);
+    $token_resource_access = array_keys((array)($this->decodedToken->resource_access ?? []));
     $allowed_resources = explode(',', $this->config['allowed_resources']);
 
     if (count(array_intersect($token_resource_access, $allowed_resources)) == 0) {
