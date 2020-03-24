@@ -46,6 +46,8 @@ class KeycloakGuard implements Guard
         $this->config['user_provider_credential'] => $this->decodedToken->{$this->config['token_principal_attribute']}
       ]);
     }
+
+    $this->user = $this->provider->retrieveByCredentials([$this->config['user_provider_credential'] => $this->decodedToken->{$this->config['user_provider_credential']}]);
   }
 
 
