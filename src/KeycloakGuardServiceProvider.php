@@ -8,9 +8,11 @@ class KeycloakGuardServiceProvider extends ServiceProvider
 {
   public function boot()
   {
-    $this->publishes([
-      __DIR__ . '/../config/keycloak.php' => config_path('keycloak.php'),
-    ], 'config');
+      $path = 'keycloak.php';
+
+      $this->publishes([
+          __DIR__ . '/../config/keycloak.php' => app()->basePath() . '/config' . ($path ? '/' . $path : $path),
+      ], 'config');
 
     $this->mergeConfigFrom(__DIR__ . '/../config/keycloak.php', 'keycloak');
   }

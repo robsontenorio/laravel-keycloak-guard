@@ -8,7 +8,7 @@
 
 </p>
 
-# Simple Keycloak Guard for Laravel
+# Simple Keycloak Guard for Laravel / Lumen
 
 This package helps you authenticate users on a Laravel API based on JWT tokens generated from  **Keycloak Server**.
 
@@ -66,6 +66,17 @@ Publish the config file
 php artisan vendor:publish  --provider="KeycloakGuard\KeycloakGuardServiceProvider"
 
 ```
+
+### Lumen
+
+Register the provider in your boostrap app file ```boostrap/app.php```
+
+Add the following line in the "Register Service Providers"  section at the bottom of the file. 
+
+```php
+$app->register(\KeycloakGuard\KeycloakGuardServiceProvider::class);
+```
+For facades, uncomment ```$app->withFacades();``` in your boostrap app file ```boostrap/app.php```
 
 # Configuration
 
@@ -165,6 +176,22 @@ Route::group(['middleware' => 'auth:api'], function () {
 });
 ```
 
+
+## Lumen Routes
+Just protect some endpoints on `routes/web.php` and you are done!
+
+```php
+// public endpoints
+$router->get('/hello', function () {
+    return ':)';
+});
+
+// protected endpoints
+$router->group(['middleware' => 'auth'], function () {
+    $router->get('/protected-endpoint', 'SecretController@index');
+    // more endpoints ...
+});
+```
 
 # API
 
