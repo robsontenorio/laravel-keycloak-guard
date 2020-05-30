@@ -148,8 +148,6 @@ class KeycloakGuard implements Guard
   public function setUser(Authenticatable $user)
   {
     $this->user = $user;
-
-    return $this;
   }
 
   /**
