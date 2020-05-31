@@ -28,6 +28,7 @@ This package helps you authenticate users on a Laravel API based on JWT tokens g
 ✔️ The frontend make requests to the Laravel API, with that token.
 
 
+💔 If your app does not match requirements, probably you are looking for https://github.com/SocialiteProviders
 
 # The flow
 
