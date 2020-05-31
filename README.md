@@ -105,7 +105,7 @@ The Keycloak Server realm public key (string).
 
 If you do not have an `users` table you must disable this.
 
-It fetchs user from database and fill values into authenticated user object. If enabled, it will work together with `user_provider_credential` and `user_provider_credential`.
+It fetchs user from database and fill values into authenticated user object. If enabled, it will work together with `user_provider_credential` and `token_principal_attribute`.
 
 ✔️ **user_provider_credential**
 
