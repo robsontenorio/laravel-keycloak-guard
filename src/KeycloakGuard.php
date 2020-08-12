@@ -11,10 +11,10 @@ use KeycloakGuard\Exceptions\ResourceAccessNotAllowedException;
 
 class KeycloakGuard implements Guard
 {
-  private $config;
-  private $user;
-  private $provider;
-  private $decodedToken;
+  protected $config;
+  protected $user;
+  protected $provider;
+  protected $decodedToken;
 
   public function __construct(UserProvider $provider, Request $request)
   {
@@ -33,7 +33,7 @@ class KeycloakGuard implements Guard
    * @return mixed
    */
 
-  private function authenticate()
+  protected function authenticate()
   {
     try {
       $this->decodedToken = Token::decode($this->request->bearerToken(), $this->config['realm_public_key']);
@@ -155,7 +155,7 @@ class KeycloakGuard implements Guard
    *
    * @return void
    */
-  private function validateResources()
+  protected function validateResources()
   {
     $token_resource_access = array_keys((array)($this->decodedToken->resource_access ?? []));
     $allowed_resources = explode(',', $this->config['allowed_resources']);
