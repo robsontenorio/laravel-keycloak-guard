@@ -87,7 +87,13 @@ return [
 
   'append_decoded_token' => env('KEYCLOAK_APPEND_DECODED_TOKEN', false),
 
-  'allowed_resources' => env('KEYCLOAK_ALLOWED_RESOURCES', null)
+  'allowed_resources' => env('KEYCLOAK_ALLOWED_RESOURCES', null),
+
+  'autorealm_cookie' => ['realm_cookie_name', env('IDMS_API_URL')], //Null if no multitenancy is desired
+
+  'user_auto_register' => function ($token) { //Null of no auto-registration is required
+      \App\User::register_from_token($token); //Hypothetical method added to the User model 
+  }
 ];
 
 ```
@@ -131,6 +137,27 @@ Appends to the authenticated user the full decoded JWT token. Useful if you need
 *Required*
 
 Usually you API should handle one *resource_access*. But, if you handle multiples, just use a comma separated list of allowed resources accepted by API. This attribute will be confronted against `resource_access` attribute from JWT token, while authenticating.
+
+✔️ **autorealm_cookie**
+
+*Required*
+
+If you plan to use your application against different Keycloak realms, leave the `realm_public_key` configuration parameter empty, and design your application to introduce a cookie with the name you desire containing the target realm for the authentication mechanism.
+The guard will automatically download the required public keys and cache it for a while. (Remember keycloak uses different public keys for each realm)
+
+This configuration parameter asks for an array of two elements. The first, the name of the cookie set with the realm name; and the second, the URL of the IDMS, used for downloading the public keys through the API (e.g. https://idms.organization.org)
+
+This is designed, for example for an application that presents the user with a page containing only an `email` box, which the user fills up first, then the relevant realm is identified (By means of the domain of the email or something else), and then the cookie is set for
+the rest of the session. This could be used also for the subdomain-per-realm strategy, using a middleware.
+
+
+✔️ **user_auto_register**
+
+*Required*
+
+If you set this to a closure (Only parameter provided is the Access Token), this code will be executed for each Access Token that failed to be located into the local user database. This could be used to allow never seen before users into the app, just creating the user record on the fly.
+This implies that you trust your IDMS (Keycloak) very much, and that it is the ultimate source of truth of the user base.
+
 
 ## Laravel Auth
 
