@@ -228,7 +228,7 @@ class KeycloakGuard implements Guard
     {
         $this->user = $user;
 
-        return $this;
+
     }
 
     /**
