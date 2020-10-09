@@ -236,9 +236,9 @@ Whit this payload:
 ]
 ```
 ```
-Auth::hasRole('myapp-backend', 'myapp-backend-role1') => true
-Auth::hasRole('myapp-frontend', 'myapp-frontend-role1') => true
-Auth::hasRole('myapp-backend', 'myapp-frontend-role1') => false
+Auth::hasRole('myapp-backend', 'myapp-backend-role1') // true
+Auth::hasRole('myapp-frontend', 'myapp-frontend-role1') // true
+Auth::hasRole('myapp-backend', 'myapp-frontend-role1') // false
 ```
 
 # Contact
