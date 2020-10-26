@@ -55,20 +55,15 @@ This package helps you authenticate users on a Laravel API based on JWT tokens g
 
 # Install
 
+### Laravel / Lumen
+
 Require the package
 
 ```
 composer require robsontenorio/laravel-keycloak-guard
 ```
 
-Publish the config file
-
-```
-php artisan vendor:publish  --provider="KeycloakGuard\KeycloakGuardServiceProvider"
-
-```
-
-### Lumen
+### Lumen only
 
 Register the provider in your boostrap app file ```boostrap/app.php```
 
@@ -84,6 +79,14 @@ For facades, uncomment ```$app->withFacades();``` in your boostrap app file ```b
 ## Keycloak Guard
 
 The Keycloak Guard configuration can be handled from Laravel `.env` file. ⚠️ Be sure all strings **are trimmed.**
+
+
+Optionally you can publish the config file.
+
+```
+php artisan vendor:publish  --provider="KeycloakGuard\KeycloakGuardServiceProvider"
+```
+
 
 ```php
 <?php
@@ -109,6 +112,9 @@ return [
 *Required.*
 
 The Keycloak Server realm public key (string).
+
+> How to get realm public key? Click on "Realm Settings" > "Keys" > "Algorithm RS256" Line > "Public Key" Button  
+
 
 ✔️ **load_user_from_database**
 
