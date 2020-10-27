@@ -154,11 +154,14 @@ Usually you API should handle one *resource_access*. But, if you handle multiple
 
 Changes on `config/auth.php`
 ```php
+...
 'defaults' => [
         'guard' => 'api', # <-- For sure, i`m building an API
         'passwords' => 'users',
     ],
-
+    
+    ....
+    
     'guards' => [
         'api' => [
             'driver' => 'keycloak', # <-- Set the API guard driver to "keycloak"
