@@ -13,6 +13,7 @@
         }
     ],
     "minimum-stability": "dev",
+    "prefer-stable": true,
     "require": {
         "firebase/php-jwt": "^5.0"
     },
