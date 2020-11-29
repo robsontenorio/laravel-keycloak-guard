@@ -93,7 +93,7 @@ class AuthenticateTest extends TestCase
 
     $response = $this->withToken()->json('GET', '/foo/secret');
 
-    $this->assertEquals(count(Auth::user()->getAttributes()), 0);
+    $this->assertCount(0, Auth::user()->getAttributes());
   }
 
   /** @test */
