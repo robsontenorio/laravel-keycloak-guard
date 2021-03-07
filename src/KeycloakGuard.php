@@ -16,6 +16,7 @@ class KeycloakGuard implements Guard
   private $user;
   private $provider;
   private $decodedToken;
+  private $roles;
 
   public function __construct(UserProvider $provider, Request $request)
   {
@@ -167,15 +168,15 @@ class KeycloakGuard implements Guard
     $token_role_property = $this->config['token_role_property'];
     $allowed_resources = explode(',', $this->config['allowed_resources']);
     $bpRoles = (array)$this->decodedToken->{$token_role_property};
-    $roles = array_shift($bpRoles);
+    $this->roles = array_shift($bpRoles);
 
-    if (is_array($roles)) {
-      $token_resource_access = array_keys($roles ?? []);
+    if (is_array($this->roles)) {
+      $token_resource_access = array_keys($this->roles ?? []);
     } else {
       throw new ResourceAccessNotAllowedException("The decoded JWT token has not a valid roles");
     }
 
-    if (count(array_intersect($roles, $allowed_resources)) == 0) {
+    if (count(array_intersect($this->roles, $allowed_resources)) == 0) {
       throw new ResourceAccessNotAllowedException("The decoded JWT token has not a valid `resource_access` allowed by API. Allowed resources by API: " . $this->config['allowed_resources']);
     }
   }
@@ -198,14 +199,10 @@ class KeycloakGuard implements Guard
    */
   public function hasRole($resource, $role)
   {
-    $token_resource_access = (array)$this->decodedToken->resource_access;
-    if (array_key_exists($resource, $token_resource_access)) {
-      $token_resource_values = (array)$token_resource_access[$resource];
-
-      if (array_key_exists('roles', $token_resource_values) &&
-        in_array($role, $token_resource_values['roles'])) {
-        return true;
-      }
+    Log::info("Roles found in token:");
+    Log::info(var_export($this->roles, true));
+    if (array_key_exists($role, $this->roles)) {
+         return true;
     }
     return false;
   }
