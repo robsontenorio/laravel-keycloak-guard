@@ -173,7 +173,8 @@ class KeycloakGuard implements Guard
     $token_role_property = $this->config['token_role_property'];
     $allowed_resources = explode(',', $this->config['allowed_resources']);
     $bpRoles = (array)$this->decodedToken->{$token_role_property};
-    $roles = array_shift(array_values($bpRoles));
+    Log::info(var_export($bpRoles, true));
+    $roles = array_shift($bpRoles);
     Log::info(var_export($roles));
 
     if (is_array($roles)) {
