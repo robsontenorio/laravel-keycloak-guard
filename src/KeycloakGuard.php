@@ -43,7 +43,7 @@ class KeycloakGuard implements Guard
       Log::info($this->decodedToken);
 
     } catch (\Exception $e) {
-      Log::info("Error, could not decode token: " $e->getMessage());
+      Log::info("Error, could not decode token: " . $e->getMessage());
       throw new TokenException($e->getMessage());
     }
 
