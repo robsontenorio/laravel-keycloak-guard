@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use KeycloakGuard\Exceptions\TokenException;
 use KeycloakGuard\Exceptions\UserNotFoundException;
 use KeycloakGuard\Exceptions\ResourceAccessNotAllowedException;
+use Log;
 
 class KeycloakGuard implements Guard
 {
@@ -42,6 +43,7 @@ class KeycloakGuard implements Guard
     }
 
     if ($this->decodedToken) {
+      Log::info("Token could be decoded. Now validate");
       $this->validate([
         $this->config['user_provider_credential'] => $this->decodedToken->{$this->config['token_principal_attribute']}
       ]);
@@ -121,7 +123,9 @@ class KeycloakGuard implements Guard
       return false;
     }
 
+    Log::info("Try to validate resources...");
     $this->validateResources();
+    Log::info("Resources validated");
 
     if ($this->config['load_user_from_database']) {
       $user = $this->provider->retrieveByCredentials($credentials);
@@ -130,11 +134,15 @@ class KeycloakGuard implements Guard
         throw new UserNotFoundException("User not found. Credentials: " . json_encode($credentials));
       }
     } else {
+      Log::info("No user table, use generic model");
       $class = $this->provider->getModel();
       $user = new $class();
     }
 
     $this->setUser($user);
+    Log::info("Following user was set:");
+    Log::info(print_r($user, true));
+
 
     return true;
   }
