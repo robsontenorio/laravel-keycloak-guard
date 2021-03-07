@@ -21,7 +21,7 @@ class KeycloakGuard implements Guard
     $this->config = config('keycloak');
     $this->user = null;
     $this->provider = $provider;
-    $this->decodedToken = {};
+    $this->decodedToken = null;
     $this->request = $request;
 
     $this->authenticate();
