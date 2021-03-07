@@ -201,7 +201,7 @@ class KeycloakGuard implements Guard
   {
     Log::info("Roles found in token:");
     Log::info(var_export($this->roles, true));
-    if (array_key_exists($role, $this->roles)) {
+    if (in_array($role, $this->roles)) {
          return true;
     }
     return false;
