@@ -128,9 +128,7 @@ class KeycloakGuard implements Guard
       return false;
     }
 
-    Log::info("Try to validate resources...");
     $this->validateResources();
-    Log::info("Resources validated");
 
     if ($this->config['load_user_from_database']) {
       $user = $this->provider->retrieveByCredentials($credentials);
@@ -139,15 +137,11 @@ class KeycloakGuard implements Guard
         throw new UserNotFoundException("User not found. Credentials: " . json_encode($credentials));
       }
     } else {
-      Log::info("No user table, use generic model");
       $class = $this->provider->getModel();
       $user = new $class();
     }
 
     $this->setUser($user);
-    Log::info("Following user was set:");
-    Log::info(print_r($user, true));
-
 
     return true;
   }
@@ -172,21 +166,14 @@ class KeycloakGuard implements Guard
   {
     $token_role_property = $this->config['token_role_property'];
     $allowed_resources = explode(',', $this->config['allowed_resources']);
-    Log::info("Allowed resource:");
-    Log::info(var_export($allowed_resources, true));
     $bpRoles = (array)$this->decodedToken->{$token_role_property};
-    Log::info("BP-Roles:");
-    Log::info(var_export($bpRoles, true));
     $roles = array_shift($bpRoles);
-    Log::info("Roles:");
-    Log::info(var_export($roles, true));
 
     if (is_array($roles)) {
       $token_resource_access = array_keys($roles ?? []);
     } else {
       throw new ResourceAccessNotAllowedException("The decoded JWT token has not a valid roles");
     }
-    // $token_resource_access = array_keys((array)($this->decodedToken->{$token_role_property} ?? []));
 
     if (count(array_intersect($roles, $allowed_resources)) == 0) {
       throw new ResourceAccessNotAllowedException("The decoded JWT token has not a valid `resource_access` allowed by API. Allowed resources by API: " . $this->config['allowed_resources']);
