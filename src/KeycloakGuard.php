@@ -172,12 +172,12 @@ class KeycloakGuard implements Guard
   {
     $token_role_property = $this->config['token_role_property'];
     $allowed_resources = explode(',', $this->config['allowed_resources']);
-    if (is_array($this->decodedToken->{$token_role_property})) {
-      $token_resource_access = array_keys((array)($this->decodedToken->{$token_role_property} ?? []));
-    } elseif (is_object($this->decodedToken->{$token_role_property})) {
-      if (is_array($this->decodedToken->{$token_role_property}[0])) {
-        $token_resource_access = array_keys((array)($this->decodedToken->{$token_role_property}[0] ?? []));
-      }
+    $bpRoles = (array)$this->decodedToken->{$token_role_property};
+    $roles = array_shift(array_values($bpRoles));
+    Log::info(var_export($roles));
+
+    if (is_array($roles)) {
+      $token_resource_access = array_keys($roles ?? []);
     } else {
       throw new ResourceAccessNotAllowedException("The decoded JWT token has not a valid roles");
     }
