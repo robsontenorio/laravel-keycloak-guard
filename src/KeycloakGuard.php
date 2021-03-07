@@ -40,7 +40,10 @@ class KeycloakGuard implements Guard
   {
     try {
       $this->decodedToken = Token::decode($this->request->bearerToken(), $this->config['realm_public_key']);
+      Log::info($this->decodedToken);
+
     } catch (\Exception $e) {
+      Log::info("Error, could not decode token: " $e->getMessage());
       throw new TokenException($e->getMessage());
     }
 
