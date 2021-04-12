@@ -1,7 +1,6 @@
 <?php
 namespace KeycloakGuard;
 
-use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\UserProvider;
@@ -124,10 +123,7 @@ class KeycloakGuard implements Guard
 
         $this->validateResources();
 
-        if ($this->config['create_or_update_user_in_database']['perform'] && $this->provider instanceof EloquentUserProvider) {
-            $model = $this->provider->createModel();
-            $user = $model::query()->updateOrCreate($credentials, $this->resolveClaimMapping($this->decodedToken));
-        } elseif ($this->config['load_user_from_database']) {
+        if ($this->config['load_user_from_database']) {
             $user = $this->provider->retrieveByCredentials($credentials);
 
             if (!$user) {
@@ -197,19 +193,5 @@ class KeycloakGuard implements Guard
             }
         }
         return false;
-    }
-
-    /**
-     * @param $decodedToken
-     * @return array
-     */
-    protected function resolveClaimMapping($decodedToken)
-    {
-        $fillable = [];
-        foreach ($this->config['create_or_update_user_in_database']['mapping'] as $key => $item) {
-            $fillable[$key] = $decodedToken->{$item};
-        }
-
-        return $fillable;
     }
 }
