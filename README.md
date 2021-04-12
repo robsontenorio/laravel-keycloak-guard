@@ -51,6 +51,8 @@ This package helps you authenticate users on a Laravel API based on JWT tokens g
 
 1. If everything is ok, find the user on database and authenticate it on my API.
 
+1. Optionally, the user is created / updated in the API users database.
+
 1. Return response
 
 # Install
@@ -95,6 +97,13 @@ return [
   'realm_public_key' => env('KEYCLOAK_REALM_PUBLIC_KEY', null),
 
   'load_user_from_database' => env('KEYCLOAK_LOAD_USER_FROM_DATABASE', true),
+    
+  'create_or_update_user_in_database' => [
+      'perform' => env('KEYCLOAK_CREATE_OR_UPDATE_USER_IN_DATABASE', false),
+      'mapping' => [
+          'db_field_name' => 'token_claim_name',
+      ]
+  ],
 
   'user_provider_credential' => env('KEYCLOAK_USER_PROVIDER_CREDENTIAL', 'username'),
 
@@ -123,6 +132,14 @@ The Keycloak Server realm public key (string).
 If you do not have an `users` table you must disable this.
 
 It fetchs user from database and fill values into authenticated user object. If enabled, it will work together with `user_provider_credential` and `token_principal_attribute`.
+
+✔️ **create_or_update_user_in_database**
+
+*Required. Default is `false`.*
+
+If you have an `users` table and want it to be updated based on the token, set it to `true` and define the mapping between our users table columns and the token claims. Be sure you are using the eloquent driver (set as default by Laravel) for your user provider.
+
+If enabled, it will work together with `user_provider_credential` and `token_principal_attribute`, to try to find the user in the users table. After the user has been created or updated he fills the authenticated user object.
 
 ✔️ **user_provider_credential**
 
