@@ -26,7 +26,7 @@ class KeycloakGuard implements Guard
     $this->decodedToken = null;
     $this->request = $request;
 
-    Log::info("Will authenticate...");
+    // Log::info("Will authenticate...");
 
     $this->authenticate();
   }
@@ -41,15 +41,15 @@ class KeycloakGuard implements Guard
   {
     try {
       $this->decodedToken = Token::decode($this->request->bearerToken(), $this->config['realm_public_key']);
-      Log::info(var_export($this->decodedToken, true));
+     //  Log::info(var_export($this->decodedToken, true));
 
     } catch (\Exception $e) {
-      Log::info("Error, could not decode token: " . $e->getMessage());
+      // Log::info("Error, could not decode token: " . $e->getMessage());
       throw new TokenException($e->getMessage());
     }
 
     if ($this->decodedToken) {
-      Log::info("Token could be decoded. Now validate");
+      // Log::info("Token could be decoded. Now validate");
       $this->validate([
         $this->config['user_provider_credential'] => $this->decodedToken->{$this->config['token_principal_attribute']}
       ]);
