@@ -166,19 +166,28 @@ class KeycloakGuard implements Guard
   private function validateResources()
   {
     $token_role_property = $this->config['token_role_property'];
-    $allowed_resources = explode(',', $this->config['allowed_resources']);
     $bpRoles = (array)$this->decodedToken->{$token_role_property};
+
+    // Extract roles from first BP
     $this->roles = array_shift($bpRoles);
 
-    if (is_array($this->roles)) {
-      $token_resource_access = array_keys($this->roles ?? []);
-    } else {
+    if (!is_array($this->roles)) {
       throw new ResourceAccessNotAllowedException("The decoded JWT token has not a valid roles");
     }
 
-    if (count(array_intersect($this->roles, $allowed_resources)) == 0) {
+    /*
+
+    $bp = array_keys($bpRoles);
+    $allowed_bp = explode(",", $this->config['allowed_bp']);
+    Log::info("Found BP-roles in token: ");
+    Log::info(var_export($bpRoles, true));
+    Log::info("Allowed BP-roles: ");
+    Log::info(var_export($allowed_bp, true));
+
+    if (!is_null($this->config['allowed_bp']) && count(array_intersect($bp, $allowed_bp)) == 0) {
       throw new ResourceAccessNotAllowedException("The decoded JWT token has not a valid `resource_access` allowed by API. Allowed resources by API: " . $this->config['allowed_resources']);
     }
+    */
   }
 
   /**
@@ -205,5 +214,24 @@ class KeycloakGuard implements Guard
          return true;
     }
     return false;
+  }
+
+  /**
+   * Check if authenticated user is a specific business partner
+   * @param string $resource
+   * @param string $role
+   * @return bool
+   */
+  public function partnerIsAllowed($partner)
+  {
+
+    $token_role_property = $this->config['token_role_property'];
+    $bpRoles = (array)$this->decodedToken->{$token_role_property};
+    $bp = array_keys($bpRoles);
+    $allowed_bp = explode(",", $this->config['allowed_bp']);
+    if (count(array_intersect($bp, $allowed_bp)) == 0) {
+      return false;
+    }
+    return true;
   }
 }
