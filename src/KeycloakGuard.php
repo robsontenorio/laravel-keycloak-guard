@@ -175,19 +175,6 @@ class KeycloakGuard implements Guard
       throw new ResourceAccessNotAllowedException("The decoded JWT token has not a valid roles");
     }
 
-    /*
-
-    $bp = array_keys($bpRoles);
-    $allowed_bp = explode(",", $this->config['allowed_bp']);
-    Log::info("Found BP-roles in token: ");
-    Log::info(var_export($bpRoles, true));
-    Log::info("Allowed BP-roles: ");
-    Log::info(var_export($allowed_bp, true));
-
-    if (!is_null($this->config['allowed_bp']) && count(array_intersect($bp, $allowed_bp)) == 0) {
-      throw new ResourceAccessNotAllowedException("The decoded JWT token has not a valid `resource_access` allowed by API. Allowed resources by API: " . $this->config['allowed_resources']);
-    }
-    */
   }
 
   /**
@@ -208,30 +195,10 @@ class KeycloakGuard implements Guard
    */
   public function hasRole($resource, $role)
   {
-    Log::info("Roles found in token:");
-    Log::info(var_export($this->roles, true));
     if (in_array($role, $this->roles)) {
          return true;
     }
     return false;
   }
 
-  /**
-   * Check if authenticated user is a specific business partner
-   * @param string $resource
-   * @param string $role
-   * @return bool
-   */
-  public function partnerIsAllowed($partner)
-  {
-
-    $token_role_property = $this->config['token_role_property'];
-    $bpRoles = (array)$this->decodedToken->{$token_role_property};
-    $bp = array_keys($bpRoles);
-    $allowed_bp = explode(",", $this->config['allowed_bp']);
-    if (count(array_intersect($bp, $allowed_bp)) == 0) {
-      return false;
-    }
-    return true;
-  }
 }
