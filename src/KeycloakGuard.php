@@ -124,11 +124,13 @@ class KeycloakGuard implements Guard
 
     $this->validateResources();
 
-    if ($this->config['create_or_update_user_in_database']['perform'] && $this->provider instanceof EloquentUserProvider) {
-      $model = $this->provider->createModel();
-      $user = $model::query()->updateOrCreate($credentials, $this->resolveClaimMapping($this->decodedToken));
-    } elseif ($this->config['load_user_from_database']) {
-      $user = $this->provider->retrieveByCredentials($credentials);
+    if ($this->config['load_user_from_database']) {
+      $methodOnProvider = $this->config['user_provider_custom_retrieve_method'] ?? null;
+      if ($methodOnProvider) {
+        $user = $this->provider->$methodOnProvider($this->decodedToken);
+      } else {
+        $user = $this->provider->retrieveByCredentials($credentials);
+      }      
 
       if (!$user) {
         throw new UserNotFoundException("User not found. Credentials: " . json_encode($credentials));
@@ -197,19 +199,5 @@ class KeycloakGuard implements Guard
       }
     }
     return false;
-  }
-
-  /**
-   * @param $decodedToken
-   * @return array
-   */
-  protected function resolveClaimMapping($decodedToken)
-  {
-      $fillable = [];
-      foreach ($this->config['create_or_update_user_in_database']['mapping'] as $key => $item) {
-          $fillable[$key] = $decodedToken->{$item};
-      }
-
-      return $fillable;
   }
 }

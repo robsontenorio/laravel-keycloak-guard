@@ -5,12 +5,7 @@ return [
 
   'load_user_from_database' => env('KEYCLOAK_LOAD_USER_FROM_DATABASE', true),
   
-  'create_or_update_user_in_database' => [
-      'perform' => env('KEYCLOAK_CREATE_OR_UPDATE_USER_IN_DATABASE', false),
-      'mapping' => [
-          'db_field_name' => 'token_claim_name',
-      ]
-  ],
+  'user_provider_custom_retrieve_method' => null,
 
   'user_provider_credential' => env('KEYCLOAK_USER_PROVIDER_CREDENTIAL', 'username'),
 
