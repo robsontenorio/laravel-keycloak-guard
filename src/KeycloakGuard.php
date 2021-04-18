@@ -1,7 +1,6 @@
 <?php
 namespace KeycloakGuard;
 
-use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\UserProvider;
