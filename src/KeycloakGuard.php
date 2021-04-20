@@ -15,16 +15,20 @@ class KeycloakGuard implements Guard
   private $user;
   private $provider;
   private $decodedToken;
+  private $realm;
 
   public function __construct(UserProvider $provider, Request $request)
   {
-    $this->config = config('keycloak.'.$request->realmName); //realm1 -> realm4
+    $this->config = config('keycloak');
+    if ($request->has('realmName')) {
+        $this->realm = config('realm');
+    }
     $this->user = null;
     $this->provider = $provider;
     $this->decodedToken = null;
     $this->request = $request;
 
-    $this->authenticate();
+    $this->authenticate($request);
   }
 
   /**
@@ -33,10 +37,14 @@ class KeycloakGuard implements Guard
    * @return mixed
    */
 
-  private function authenticate()
+  private function authenticate($request)
   {
     try {
-      $this->decodedToken = Token::decode($this->request->bearerToken(), $this->config['realm_public_key']);
+      if($request->has('realmName')){
+        $this->decodedToken = Token::decode($this->request->bearerToken(), $this->realm[$request->realmName]); //public key from realm.php
+      }else{
+        $this->decodedToken = Token::decode($this->request->bearerToken(), $this->config['realm_public_key']); //default public key from keycloak.php
+      }
     } catch (\Exception $e) {
       throw new TokenException($e->getMessage());
     }
