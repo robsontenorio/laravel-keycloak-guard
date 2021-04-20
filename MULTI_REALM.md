@@ -19,4 +19,4 @@ return [
 
 ```
 
-2. Pass realmName paramater in your request.
+2. Pass realmName paramater in your header.
