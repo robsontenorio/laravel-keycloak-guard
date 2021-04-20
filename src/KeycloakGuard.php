@@ -18,7 +18,7 @@ class KeycloakGuard implements Guard
 
   public function __construct(UserProvider $provider, Request $request)
   {
-    $this->config = config('keycloak');
+    $this->config = config('keycloak.'.$request->realmName); //realm1 -> realm4
     $this->user = null;
     $this->provider = $provider;
     $this->decodedToken = null;
