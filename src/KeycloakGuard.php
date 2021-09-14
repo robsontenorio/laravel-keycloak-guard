@@ -125,16 +125,14 @@ class KeycloakGuard implements Guard
 
     if ($this->config['load_user_from_database']) {
       $user = $this->provider->retrieveByCredentials($credentials);
-
-      if (!$user) {
-        throw new UserNotFoundException("User not found. Credentials: " . json_encode($credentials));
-      }
     } else {
       $class = $this->provider->getModel();
       $user = new $class();
     }
 
-    $this->setUser($user);
+    if ($user) {
+        $this->setUser($user);
+    }
 
     return true;
   }
