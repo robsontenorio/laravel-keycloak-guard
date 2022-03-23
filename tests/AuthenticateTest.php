@@ -2,11 +2,13 @@
 namespace KeycloakGuard\Tests;
 
 use Illuminate\Http\Request;
+use Illuminate\Hashing\BcryptHasher;
 use Illuminate\Support\Facades\Auth;
 use KeycloakGuard\KeycloakGuard;
 use KeycloakGuard\Tests\Models\User;
 use KeycloakGuard\KeycloakGuardServiceProvider;
 use KeycloakGuard\Tests\Controllers\FooController;
+use KeycloakGuard\Tests\Extensions\CustomUserProvider;
 use Illuminate\Routing\Router;
 use Illuminate\Events\Dispatcher;
 use KeycloakGuard\Exceptions\UserNotFoundException;
@@ -181,4 +183,17 @@ class AuthenticateTest extends TestCase
   }
 
 
+
+    /** @test */
+    public function custom_user_retrieve_method()
+    {
+      config(['keycloak.user_provider_custom_retrieve_method' => 'custom_retrieve']);
+
+      Auth::extend('keycloak', function ($app, $name, array $config) {
+          return new KeycloakGuard(new CustomUserProvider(new BcryptHasher(), User::class), $app->request);
+      });
+
+      $response = $this->withToken()->json('GET', '/foo/secret');
+      $this->assertTrue(Auth::user()->customRetrieve);
+    }
 }
