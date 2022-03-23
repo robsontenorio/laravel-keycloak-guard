@@ -126,7 +126,7 @@ class KeycloakGuard implements Guard
     if ($this->config['load_user_from_database']) {
       $methodOnProvider = $this->config['user_provider_custom_retrieve_method'] ?? null;
       if ($methodOnProvider) {
-        $user = $this->provider->{$methodOnProvider}($this->decodedToken);
+        $user = $this->provider->{$methodOnProvider}($this->decodedToken, $credentials);
       } else {
         $user = $this->provider->retrieveByCredentials($credentials);
       }      
