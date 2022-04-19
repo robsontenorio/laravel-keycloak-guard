@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 class KeyCloakUser
 {
     private $user = null;
+    private $decodedToken = null;
 
   /**
    * Get the currently authenticated user.
@@ -43,9 +44,30 @@ class KeyCloakUser
    * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
    * @return void
    */
-  public function setUser(Authenticatable $user)
+  public function setUser(Authenticatable $user, $decodedToken)
   {
     $this->user = $user;
+    $this->decodedToken = $decodedToken;
+  }
+
+  public function roles()
+  {
+    $token_resource_access = (array)$this->decodedToken;
+    if (array_key_exists('roles', $token_resource_access)) {
+        return $token_resource_access['roles'];
+    }
+
+    return [];
+  }
+
+  public function scopes()
+  {
+    $token_resource_access = (array)$this->decodedToken;
+    if (array_key_exists('scope', $token_resource_access)) {
+        return $token_resource_access['scope'];
+    }
+    
+    return [];
   }
 
    /**
