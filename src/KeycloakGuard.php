@@ -13,13 +13,15 @@ class KeycloakGuard implements Guard
 {
   private $config;
   private $user;
+  private $keyCloakUser;
   private $provider;
   private $decodedToken;
 
-  public function __construct(UserProvider $provider, Request $request)
+  public function __construct(UserProvider $provider, Request $request, KeyCloakUser $keyCloakUser)
   {
     $this->config = config('keycloak');
     $this->user = null;
+    $this->keyCloakUser = $keyCloakUser;
     $this->provider = $provider;
     $this->decodedToken = null;
     $this->request = $request;
@@ -56,7 +58,7 @@ class KeycloakGuard implements Guard
    */
   public function check()
   {
-    return !is_null($this->user());
+    return !is_null($this->keyCloakUser->get());
   }
 
   /**
@@ -66,7 +68,7 @@ class KeycloakGuard implements Guard
    */
   public function hasUser()
   {
-    return !is_null($this->user());
+    return !is_null($this->keyCloakUser->get());
   }
 
   /**
@@ -77,36 +79,6 @@ class KeycloakGuard implements Guard
   public function guest()
   {
     return !$this->check();
-  }
-
-  /**
-   * Get the currently authenticated user.
-   *
-   * @return \Illuminate\Contracts\Auth\Authenticatable|null
-   */
-  public function user()
-  {
-    if (is_null($this->user)) {
-      return null;
-    }
-
-    if ($this->config['append_decoded_token']) {
-      $this->user->token = $this->decodedToken;
-    }
-
-    return $this->user;
-  }
-
-  /**
-   * Get the ID for the currently authenticated user.
-   *
-   * @return int|null
-   */
-  public function id()
-  {
-    if ($user = $this->user()) {
-      return $this->user()->id;
-    }
   }
 
   /**
@@ -139,20 +111,9 @@ class KeycloakGuard implements Guard
       $user = new $class();
     }
 
-    $this->setUser($user);
+    $this->keyCloakUser->setUser($user);
 
     return true;
-  }
-
-  /**
-   * Set the current user.
-   *
-   * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
-   * @return void
-   */
-  public function setUser(Authenticatable $user)
-  {
-    $this->user = $user;
   }
 
   /**
