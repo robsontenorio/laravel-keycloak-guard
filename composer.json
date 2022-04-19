@@ -15,7 +15,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "firebase/php-jwt": "^5.0"
+        "firebase/php-jwt": "^6.1"
     },
     "autoload": {
         "psr-4": {
