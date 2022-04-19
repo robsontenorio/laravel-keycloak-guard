@@ -47,4 +47,24 @@ class KeyCloakUser
   {
     $this->user = $user;
   }
+
+   /**
+   * Check if authenticated user has a especific role into resource
+   * @param string $resource
+   * @param string $role
+   * @return bool
+   */
+  public function hasRole(string $resource, string $role)
+  {
+    $token_resource_access = (array)$this->decodedToken->resource_access;
+    if (array_key_exists($resource, $token_resource_access)) {
+      $token_resource_values = (array)$token_resource_access[$resource];
+
+      if (array_key_exists('roles', $token_resource_values) &&
+        in_array($role, $token_resource_values['roles'])) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

@@ -140,24 +140,14 @@ class KeycloakGuard implements Guard
   {
     return json_encode($this->decodedToken);
   }
-
-  /**
-   * Check if authenticated user has a especific role into resource
-   * @param string $resource
-   * @param string $role
-   * @return bool
-   */
-  public function hasRole($resource, $role)
+  
+  public function user()
   {
-    $token_resource_access = (array)$this->decodedToken->resource_access;
-    if (array_key_exists($resource, $token_resource_access)) {
-      $token_resource_values = (array)$token_resource_access[$resource];
+    return $this->keyCloakUser->get();
+  }
 
-      if (array_key_exists('roles', $token_resource_values) &&
-        in_array($role, $token_resource_values['roles'])) {
-        return true;
-      }
-    }
-    return false;
+  public function hasRole(string $resource, string $role)
+  {
+    return $this->keyCloakUser->hasRole($resource, $role);
   }
 }
