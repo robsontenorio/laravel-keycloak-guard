@@ -139,7 +139,6 @@ class KeycloakGuard implements Guard
      */
     public function setUser(Authenticatable $user)
     {
-        #dd("BAUM");
         $this->keyCloakUser->setUser($user, $this->decodedToken);
     }
 
