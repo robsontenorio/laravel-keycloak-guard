@@ -62,16 +62,13 @@ class KeyCloakUser
      */
     public function roles()
     {
-        $token_resource_access = (array)$this->decodedToken;
-        if(empty($token_resource_access['account'])) {
+        $token_resource_access = (array)$this->decodedToken->resource_access;
+
+        if(empty($token_resource_access['account']->roles)) {
             return [];
         }
 
-        if (array_key_exists('roles', $token_resource_access)) {
-            return $token_resource_access['roles'];
-        }
-
-        return [];
+        return $token_resource_access['account']->roles;
     }
 
     /**
