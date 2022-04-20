@@ -17,11 +17,11 @@ class KeycloakGuard implements Guard
   private $provider;
   private $decodedToken;
 
-  public function __construct(UserProvider $provider, Request $request, KeyCloakUser $keyCloakUser)
+  public function __construct(UserProvider $provider, Request $request)
   {
     $this->config = config('keycloak');
     $this->user = null;
-    $this->keyCloakUser = $keyCloakUser;
+    $this->keyCloakUser = new KeyCloakUser();
     $this->provider = $provider;
     $this->decodedToken = null;
     $this->request = $request;
@@ -111,7 +111,7 @@ class KeycloakGuard implements Guard
       $user = new $class();
     }
 
-    $this->keyCloakUser->setUser($user);
+    $this->keyCloakUser->setUser($user, $this->decodedToken);
 
     return true;
   }
@@ -151,7 +151,16 @@ class KeycloakGuard implements Guard
   {
     return json_encode($this->decodedToken);
   }
-  
+    /**
+     * Get the ID for the currently authenticated user.
+     *
+     * @return int|null
+     */
+    public function id()
+    {
+        return $this->keyCloakUser->id();
+    }
+
   public function user()
   {
     return $this->keyCloakUser->get();
