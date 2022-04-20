@@ -38,7 +38,11 @@ class KeycloakGuard implements Guard
   private function authenticate()
   {
     try {
-      $this->decodedToken = Token::decode($this->request->bearerToken(), $this->config['realm_public_key']);
+        // set key and server
+        $pubKey = !empty($this->config['realm_public_key']) ? $this->config['realm_public_key'] : '';
+        $server = !empty($this->config['realm_address']) ? $this->config['realm_address'] : '';
+
+        $this->decodedToken = Token::decode($this->request->bearerToken(), $pubKey, $server);
     } catch (\Exception $e) {
       throw new TokenException($e->getMessage());
     }
