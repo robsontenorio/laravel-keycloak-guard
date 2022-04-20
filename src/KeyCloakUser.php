@@ -56,16 +56,25 @@ class KeyCloakUser
         $this->decodedToken = $decodedToken;
     }
 
+    /**
+     * return roles
+     * @return array|mixed
+     */
     public function roles()
     {
-        $token_resource_access = (array)$this->decodedToken;
-        if (array_key_exists('roles', $token_resource_access)) {
-            return $token_resource_access['roles'];
+        $token_resource_access = (array)$this->decodedToken->resource_access;
+
+        if(empty($token_resource_access['account']->roles)) {
+            return [];
         }
 
-        return [];
+        return $token_resource_access['account']->roles;
     }
 
+    /**
+     * return scopes
+     * @return array|mixed
+     */
     public function scopes()
     {
         $token_resource_access = (array)$this->decodedToken;
