@@ -7,6 +7,12 @@ class KeyCloakUser
 {
     private $user = null;
     private $decodedToken = null;
+    private $config;
+
+    public function __construct()
+    {
+        $this->config = config('keycloak');
+    }
 
     /**
      * Get the currently authenticated user.
