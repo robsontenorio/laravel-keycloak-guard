@@ -131,6 +131,18 @@ class KeycloakGuard implements Guard
     }
   }
 
+    /**
+     * Set the current user.
+     *
+     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
+     * @return void
+     */
+    public function setUser(Authenticatable $user)
+    {
+        #dd("BAUM");
+        $this->keyCloakUser->setUser($user, $this->decodedToken);
+    }
+
   /**
    * Returns full decoded JWT token from athenticated user
    *
