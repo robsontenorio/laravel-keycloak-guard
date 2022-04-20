@@ -111,7 +111,7 @@ class KeycloakGuard implements Guard
       $user = new $class();
     }
 
-    $this->keyCloakUser->setUser($user);
+    $this->keyCloakUser->setUser($user, $this->decodedToken);
 
     return true;
   }
