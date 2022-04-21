@@ -24,6 +24,7 @@ class Token
 
         if (!empty($keyCloakServer)) {
             $publicKey = self::getPublicFromKeyCloak($keyCloakServer);
+            $publicKey = self::buildPublicKey($publicKey);
         }
 
         if (empty($publicKey)) {
