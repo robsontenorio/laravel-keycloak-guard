@@ -18,20 +18,24 @@ class Token
      */
     public static function decode(string $token = null, string $publicKey = '', string $keyCloakServer = '')
     {
-        if (!empty($publicKey)) {
-            $publicKey = self::buildPublicKey($publicKey);
-        }
+        return $token ? JWT::decode(
+            $token,
+            new Key(self::loadPublicKey($publicKey, $keyCloakServer), 'RS256')
+        ) : null;
+    }
 
-        if (!empty($keyCloakServer)) {
-            $publicKey = self::getPublicFromKeyCloak($keyCloakServer);
-            $publicKey = self::buildPublicKey($publicKey);
-        }
-
-        if (empty($publicKey)) {
-            throw new TokenException("No pub key found.");
-        }
-
-        return $token ? JWT::decode($token, new Key($publicKey, 'RS256')) : null;
+    /**
+     * @param string $publicKey
+     * @param string $keyCloakServer
+     * @return string
+     */
+    private static function loadPublicKey(string $publicKey = '', string $keyCloakServer = ''): string
+    {
+        return match (true) {
+            strlen($keyCloakServer) > 0 => self::buildPublicKey(self::getPublicFromKeyCloak($keyCloakServer)),
+            strlen($publicKey) > 0 => self::buildPublicKey($publicKey),
+            default => throw new TokenException('No public key found.'),
+        };
     }
 
     /**
