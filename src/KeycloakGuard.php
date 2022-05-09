@@ -16,13 +16,14 @@ class KeycloakGuard implements Guard
   private $provider;
   private $decodedToken;
 
-  public function __construct(UserProvider $provider, Request $request)
+  public function __construct(UserProvider $provider, Request $request, string $inputKey = 'api_token')
   {
     $this->config = config('keycloak');
     $this->user = null;
     $this->provider = $provider;
     $this->decodedToken = null;
     $this->request = $request;
+    $this->inputKey = $inputKey;
 
     $this->authenticate();
   }
@@ -36,7 +37,7 @@ class KeycloakGuard implements Guard
   private function authenticate()
   {
     try {
-      $this->decodedToken = Token::decode($this->request->bearerToken(), $this->config['realm_public_key']);
+      $this->decodedToken = Token::decode($this->getTokenForRequest(), $this->config['realm_public_key']);
     } catch (\Exception $e) {
       throw new TokenException($e->getMessage());
     }
@@ -48,6 +49,29 @@ class KeycloakGuard implements Guard
     }
   }
 
+  /**
+   * Get the token for the current request.
+   *
+   * @return string
+   */
+  public function getTokenForRequest()
+  {
+    $token = $this->request->query($this->inputKey);
+
+    if (empty($token)) {
+      $token = $this->request->input($this->inputKey);
+    }
+
+    if (empty($token)) {
+      $token = $this->request->bearerToken();
+    }
+
+    if (empty($token)) {
+      $token = $this->request->getPassword();
+    }
+
+    return $token;
+  }
 
   /**
    * Determine if the current user is authenticated.
@@ -129,7 +153,7 @@ class KeycloakGuard implements Guard
         $user = $this->provider->{$methodOnProvider}($this->decodedToken, $credentials);
       } else {
         $user = $this->provider->retrieveByCredentials($credentials);
-      }      
+      }
 
       if (!$user) {
         throw new UserNotFoundException("User not found. Credentials: " . json_encode($credentials));

@@ -35,6 +35,30 @@ class AuthenticateTest extends TestCase
   }
 
   /** @test */
+  public function it_authenticates_the_user_when_request_any_endpoint_with_query_token()
+  {
+    $this->json('GET', '/foo/secret?api_token=' . $this->token);
+
+    $this->assertEquals($this->user->username, Auth::user()->username);
+
+    $this->json('GET', '/foo/public');
+
+    $this->assertEquals($this->user->username, Auth::user()->username);
+  }
+
+  /** @test */
+  public function it_authenticates_the_user_when_request_any_endpoint_with_input_token()
+  {
+    $this->json('POST', '/foo/secret', ['api_token' => $this->token]);
+
+    $this->assertEquals($this->user->username, Auth::user()->username);
+
+    $this->json('GET', '/foo/public');
+
+    $this->assertEquals($this->user->username, Auth::user()->username);
+  }
+
+  /** @test */
   public function it_forbiden_when_request_a_protected_endpoint_without_token()
   {
     $response = $this->json('GET', '/foo/secret');
