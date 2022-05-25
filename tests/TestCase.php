@@ -46,6 +46,7 @@ class TestCase extends Orchestra
     config(['keycloak.token_principal_attribute' => 'preferred_username']);
     config(['keycloak.append_decoded_token' => false]);
     config(['keycloak.allowed_resources' => 'myapp-backend']);
+    config(['keycloak.input_key' => 'api_token']);
 
     // bootstrap 
 

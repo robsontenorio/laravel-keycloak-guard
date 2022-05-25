@@ -16,14 +16,13 @@ class KeycloakGuard implements Guard
   private $provider;
   private $decodedToken;
 
-  public function __construct(UserProvider $provider, Request $request, string $inputKey = 'api_token')
+  public function __construct(UserProvider $provider, Request $request)
   {
     $this->config = config('keycloak');
     $this->user = null;
     $this->provider = $provider;
     $this->decodedToken = null;
     $this->request = $request;
-    $this->inputKey = $inputKey;
 
     $this->authenticate();
   }
@@ -56,10 +55,12 @@ class KeycloakGuard implements Guard
    */
   public function getTokenForRequest()
   {
-    $token = $this->request->query($this->inputKey);
+    $inputKey = $this->config['input_key'] ?? 'api_token';
+
+    $token = $this->request->query($inputKey);
 
     if (empty($token)) {
-      $token = $this->request->input($this->inputKey);
+      $token = $this->request->input($inputKey);
     }
 
     if (empty($token)) {

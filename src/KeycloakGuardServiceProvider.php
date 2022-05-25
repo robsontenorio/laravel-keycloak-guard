@@ -20,8 +20,7 @@ class KeycloakGuardServiceProvider extends ServiceProvider
     Auth::extend('keycloak', function ($app, $name, array $config) {
       return new KeycloakGuard(
         Auth::createUserProvider($config['provider']),
-        $app->request,
-        $config['input_key'] ?? 'api_token'
+        $app->request
       );
     });
   }
