@@ -47,6 +47,19 @@ class AuthenticateTest extends TestCase
   }
 
   /** @test */
+  public function it_authenticates_the_user_when_request_any_endpoint_with_query_token_custom_input_key()
+  {
+    config(['keycloak.input_key' => 'token']);
+    $this->json('GET', '/foo/secret?token=' . $this->token);
+
+    $this->assertEquals($this->user->username, Auth::user()->username);
+
+    $this->json('GET', '/foo/public');
+
+    $this->assertEquals($this->user->username, Auth::user()->username);
+  }
+
+  /** @test */
   public function it_authenticates_the_user_when_request_any_endpoint_with_input_token()
   {
     $this->json('POST', '/foo/secret', ['api_token' => $this->token]);
