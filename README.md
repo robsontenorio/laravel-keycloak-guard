@@ -163,6 +163,12 @@ Appends to the authenticated user the full decoded JWT token (`$user->token`). U
 
 Usually you API should handle one *resource_access*. But, if you handle multiples, just use a comma separated list of allowed resources accepted by API. This attribute will be confronted against `resource_access` attribute from JWT token, while authenticating.
 
+✔️ **input_key**
+
+*Default is `api_token`.*
+
+The name of the query string item from the request containing the API token.
+
 ## Laravel Auth
 
 Changes on `config/auth.php`
