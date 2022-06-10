@@ -1,7 +1,7 @@
 <?php 
 
 return [
-  'ignore_verify_resources' => env('KEYCLOAK_IGNORE_VERIFY_RESOURCES', false),
+  'ignore_validate_resources' => env('KEYCLOAK_IGNORE_VALIDATE_RESOURCES', false),
 
   'realm_public_key' => env('KEYCLOAK_REALM_PUBLIC_KEY', null),
 
