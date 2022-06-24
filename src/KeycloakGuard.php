@@ -121,7 +121,9 @@ class KeycloakGuard implements Guard
       return false;
     }
 
-    $this->validateResources();
+    if (!$this->config['ignore_validate_resources']) {
+      $this->validateResources();
+    }
 
     if ($this->config['load_user_from_database']) {
       $methodOnProvider = $this->config['user_provider_custom_retrieve_method'] ?? null;
