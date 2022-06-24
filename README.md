@@ -106,7 +106,9 @@ return [
 
   'append_decoded_token' => env('KEYCLOAK_APPEND_DECODED_TOKEN', false),
 
-  'allowed_resources' => env('KEYCLOAK_ALLOWED_RESOURCES', null)
+  'allowed_resources' => env('KEYCLOAK_ALLOWED_RESOURCES', null),
+
+  'ignore_validate_resources' => env('KEYCLOAK_IGNORE_VALIDATE_RESOURCES', false)
 ];
 
 ```
@@ -162,6 +164,12 @@ Appends to the authenticated user the full decoded JWT token (`$user->token`). U
 *Required*
 
 Usually you API should handle one *resource_access*. But, if you handle multiples, just use a comma separated list of allowed resources accepted by API. This attribute will be confronted against `resource_access` attribute from JWT token, while authenticating.
+
+✔️ **ignore_validate_resources**
+
+*Default is `false`.*
+
+If your keycloak realm does not have any *resource_access* attribute in their JWT, you can disable this feature.
 
 ## Laravel Auth
 
