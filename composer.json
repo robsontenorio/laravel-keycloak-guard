@@ -1,15 +1,15 @@
 {
-    "name": "robsontenorio/laravel-keycloak-guard",
+    "name": "heig-fablab/laravel-keycloak-guard",
     "description": "🔑 Simple Keycloak Guard for Laravel",
     "keywords": [
         "laravel",
         "keycloak"
     ],
-    "homepage": "https://github.com/robsontenorio/laravel-keycloak-guard",
+    "homepage": "https://github.com/heig-fablab/laravel-keycloak-guard",
     "license": "MIT",
     "authors": [
         {
-            "name": "Robson Tenório"
+            "name": "Robson Tenório & Alec Berney"
         }
     ],
     "minimum-stability": "dev",
