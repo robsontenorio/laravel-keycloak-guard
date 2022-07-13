@@ -4,6 +4,7 @@ namespace KeycloakGuard;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
 use KeycloakGuard\Exceptions\TokenException;
 
 class Token
@@ -55,11 +56,17 @@ class Token
      */
     private static function getPublicFromKeyCloak(string $keyCloakServer)
     {
+        $key = Cache::get('keycloak_key');
+        if(isset($key)) {
+            return $key;
+        }
+
         $response = Http::get($keyCloakServer);
         if (!$response->successful()) {
             throw new TokenException("Cant get public key from keycloak server.");
         }
 
+        Cache::put('keycloak_key', $response->json()['public_key'], now()->addHours(config('keycloak')['key_cache_time']));
         return $response->json()['public_key'];
     }
 }

@@ -16,7 +16,7 @@
     "prefer-stable": true,
     "require": {
         "php": "^8.0",
-        "firebase/php-jwt": "^6.1"
+        "firebase/php-jwt": "^6.2"
     },
     "autoload": {
         "psr-4": {

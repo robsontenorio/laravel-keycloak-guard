@@ -16,4 +16,6 @@ return [
     'allowed_resources' => env('KEYCLOAK_ALLOWED_RESOURCES', null),
 
     'realm_address' => env('KEYCLOAK_REALM_ADDRESS', null),
+
+    'key_cache_time' => env('KEYCLOAK_KEY_CACHE_TIME', 24),
 ];
