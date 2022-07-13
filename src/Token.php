@@ -57,8 +57,9 @@ class Token
     private static function getPublicFromKeyCloak(string $keyCloakServer)
     {
         $key = Cache::get('keycloak_key');
-        if(isset($key))
+        if(isset($key)) {
             return $key;
+        }
 
         $response = Http::get($keyCloakServer);
         if (!$response->successful()) {
