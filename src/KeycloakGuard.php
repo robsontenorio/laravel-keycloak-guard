@@ -1,6 +1,7 @@
 <?php
 namespace KeycloakGuard;
 
+use App\Models\User;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\UserProvider;
@@ -108,7 +109,7 @@ class KeycloakGuard implements Guard
       }      
 
       if (!$user) {
-        throw new UserNotFoundException("User not found. Credentials: " . json_encode($credentials));
+          $user = $this->saveUser();
       }
     } else {
       $class = $this->provider->getModel();
@@ -174,4 +175,13 @@ class KeycloakGuard implements Guard
   {
     return $this->keyCloakUser->hasRole($resource, $role);
   }
+
+    private function saveUser()
+    {
+        if (!empty($this->decodedToken->preferred_username)) {
+            return User::create(['email' => $this->decodedToken->preferred_username,
+                'name' => $this->decodedToken->name ?? '',
+            ]);
+        }
+    }
 }
