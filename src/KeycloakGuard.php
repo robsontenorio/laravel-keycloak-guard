@@ -198,6 +198,6 @@ class KeycloakGuard implements Guard
 
     public function getSubject()
     {
-        return $this->token()['sub'] ?? null;
+        return $this->decodedToken->sub ?? null;
     }
 }
