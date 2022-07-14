@@ -195,4 +195,9 @@ class KeycloakGuard implements Guard
     {
         return $this->keyCloakUser->hasRole($resource, $role);
     }
+
+    public function getSubject()
+    {
+        return $this->token()['sub'] ?? null;
+    }
 }
