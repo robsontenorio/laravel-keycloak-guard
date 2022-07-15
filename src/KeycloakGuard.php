@@ -3,6 +3,7 @@
 namespace KeycloakGuard;
 
 use App\Models\User;
+use Illuminate\Support\Arr;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
@@ -190,11 +191,6 @@ class KeycloakGuard implements Guard
         return $this->keyCloakUser->get();
     }
 
-    public function hasRole(string $resource, string $role)
-    {
-        return $this->keyCloakUser->hasRole($resource, $role);
-    }
-
     public function getSubject(): ?string
     {
         return $this->decodedToken->sub ?? null;
@@ -224,5 +220,15 @@ class KeycloakGuard implements Guard
         }
 
         return get_object_vars($this->decodedToken->resource_access);
+    }
+
+    public function hasScope(string $scope): bool
+    {
+        return in_array($scope, $this->getScopes(), true);
+    }
+
+    public function hasRole(string $role): bool
+    {
+        return Arr::has($this->getRoles(), $role);
     }
 }
