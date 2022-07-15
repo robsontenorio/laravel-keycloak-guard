@@ -227,8 +227,8 @@ class KeycloakGuard implements Guard
         return in_array($scope, $this->getScopes(), true);
     }
 
-    public function hasRole(string $role): bool
+    public function hasRole(string $path, string $role): bool
     {
-        return Arr::has($this->getRoles(), $role);
+        return (Arr::get($this->getRoles(), $path) == $role);
     }
 }
