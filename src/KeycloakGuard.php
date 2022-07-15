@@ -45,7 +45,7 @@ class KeycloakGuard implements Guard
 
             $this->decodedToken = Token::decode($this->request->bearerToken(), $pubKey, $server);
         } catch (\Exception $e) {
-            throw new TokenException($e->getMessage());
+            abort(401, "[Keycloak Guard] ".$e->getMessage());
         }
 
         if ($this->decodedToken) {
@@ -70,7 +70,6 @@ class KeycloakGuard implements Guard
         if ($this->validateResources() === false && $this->validateScopes() === false) {
             throw new ResourceAccessNotAllowedException("The decoded JWT token has no a valid access allowed by API. Allowed resources by API: " . $this->config['allowed_resources']);
         }
-
 
         if ($this->config['load_user_from_database']) {
             $methodOnProvider = $this->config['user_provider_custom_retrieve_method'] ?? null;
@@ -196,8 +195,34 @@ class KeycloakGuard implements Guard
         return $this->keyCloakUser->hasRole($resource, $role);
     }
 
-    public function getSubject()
+    public function getSubject(): ?string
     {
         return $this->decodedToken->sub ?? null;
+    }
+
+    public function getScopes(): array
+    {
+        if (empty($this->decodedToken->scopes)) {
+             return [];
+        }
+        return explode(" ", $this->decodedToken->scopes);
+    }
+
+    public function getRoles(): array
+    {
+        if (empty($this->decodedToken->roles)) {
+            return [];
+        }
+
+        return $this->decodedToken->roles;
+    }
+
+    public function getResourceAccess(): array
+    {
+        if (empty($this->decodedToken->resource_access)) {
+            return [];
+        }
+
+        return $this->decodedToken->resource_access;
     }
 }
