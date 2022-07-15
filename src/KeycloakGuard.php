@@ -202,19 +202,19 @@ class KeycloakGuard implements Guard
 
     public function getScopes(): array
     {
-        if (empty($this->decodedToken->scopes)) {
-             return [];
+        if (empty($this->decodedToken->scope)) {
+            return [];
         }
-        return explode(" ", $this->decodedToken->scopes);
+        return explode(" ", $this->decodedToken->scope);
     }
 
     public function getRoles(): array
     {
-        if (empty($this->decodedToken->roles)) {
+        if (empty($this->decodedToken->role)) {
             return [];
         }
 
-        return $this->decodedToken->roles;
+        return $this->decodedToken->role;
     }
 
     public function getResourceAccess(): array
@@ -223,6 +223,6 @@ class KeycloakGuard implements Guard
             return [];
         }
 
-        return $this->decodedToken->resource_access;
+        return get_object_vars($this->decodedToken->resource_access);
     }
 }
