@@ -206,11 +206,11 @@ class KeycloakGuard implements Guard
 
     public function getRoles(): array
     {
-        if (empty($this->decodedToken->role)) {
+        if (empty($this->decodedToken->realm_access->roles)) {
             return [];
         }
 
-        return $this->decodedToken->role;
+        return $this->decodedToken->realm_access->roles;
     }
 
     public function getResourceAccess(): array
@@ -227,8 +227,8 @@ class KeycloakGuard implements Guard
         return in_array($scope, $this->getScopes(), true);
     }
 
-    public function hasRole(string $path, string $role): bool
+    public function hasRole(string $role): bool
     {
-        return (Arr::get($this->getRoles(), $path) == $role);
+        return in_array($role, $this->getRoles(), true);
     }
 }
