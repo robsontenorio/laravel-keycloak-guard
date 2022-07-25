@@ -199,4 +199,52 @@ class KeycloakGuard implements Guard
     }
     return false;
   }
+
+  /**
+   * Check if authenticated user has a especific permission into resource
+   * @param string $resource
+   * @param string $permission
+   * @return bool
+   */
+  public function hasPermission($resource, $permission)
+  {
+
+
+    $token = request()->bearerToken();
+
+
+    $key_url = "http://127.0.0.1:8080/auth/";
+    $realm = "your-realm";
+
+    //this two variables need to add to the config file and set as env variables to be able to change easily
+
+    $tokenUrl = $key_url . 'realms/' .  $realm . '/protocol/openid-connect/token';
+    
+    $headers = ['Authorization' => 'Bearer ' . $token];
+
+    $formData = [
+      "grant_type" => "urn:ietf:params:oauth:grant-type:uma-ticket",
+      "audience" => $resource,
+      'permission' => $permission,
+      'response_mode' => "decision",
+    ];
+
+
+    try {
+      $client = new \GuzzleHttp\Client();
+
+      $request = $client->post($tokenUrl, [
+        'headers' => $headers,
+        'form_params' => $formData,
+      ]);
+
+      $response = $request->getBody();
+      $response  = (array)json_decode($response);
+
+      return isset($response["result"]) ? $response["result"] : false;
+    } catch (\Exception $e) {
+      return false;
+    }
+  }
 }
+
