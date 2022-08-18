@@ -43,9 +43,9 @@
             "@test"
         ],
         "fix": [
-            "php-cs-fixer fix --config ~/Development/.php-cs-fixer.dist.php --cache-file=./vendor/.php-cs-fixer.cache ./config",
-            "php-cs-fixer fix --config ~/Development/.php-cs-fixer.dist.php --cache-file=./vendor/.php-cs-fixer.cache ./src",
-            "php-cs-fixer fix --config ~/Development/.php-cs-fixer.dist.php --cache-file=./vendor/.php-cs-fixer.cache ./tests"
+            "php-cs-fixer fix --config .php-cs-fixer.dist.php --cache-file=./vendor/.php-cs-fixer.cache ./config",
+            "php-cs-fixer fix --config .php-cs-fixer.dist.php --cache-file=./vendor/.php-cs-fixer.cache ./src",
+            "php-cs-fixer fix --config .php-cs-fixer.dist.php --cache-file=./vendor/.php-cs-fixer.cache ./tests"
         ],
         "test": "./vendor/bin/phpunit",
         "test-coverage": "./vendor/bin/phpunit --coverage-html coverage",
