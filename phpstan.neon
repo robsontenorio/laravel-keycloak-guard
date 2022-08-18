@@ -1,0 +1,5 @@
+includes:
+	- phpstan.neon.dist
+
+parameters:
+    editorUrl: 'vscode://file/%%file%%:%%line%%'
