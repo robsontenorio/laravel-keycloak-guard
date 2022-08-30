@@ -1,107 +1,115 @@
 <?php
+
 namespace KeycloakGuard\Tests;
 
-use Illuminate\Foundation\Application;
-use Illuminate\Database\Schema\Blueprint;
-use Orchestra\Testbench\TestCase as Orchestra;
-use KeycloakGuard\KeycloakGuardServiceProvider;
 use Firebase\JWT\JWT;
-use Illuminate\Support\Facades\Route;
-use KeycloakGuard\Tests\Models\User;
 use Illuminate\Auth\Middleware\Authenticate;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Route;
+use KeycloakGuard\KeycloakGuardServiceProvider;
+use KeycloakGuard\Tests\Factories\UserFactory;
+use KeycloakGuard\Tests\Models\User;
+use OpenSSLAsymmetricKey;
+use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
 {
-  protected function setUp() : void
-  {
-    parent::setUp();    
-    
-    // Laravel default configs
+    private OpenSSLAsymmetricKey $privateKey;
+    private string $publicKey;
+    private array $payload;
+    private string $token;
 
-    config(['auth.providers.users.model' => User::class]);
-    config(['auth.defaults.guard' => 'api']);
-    config(['auth.guards.api.driver' => 'keycloak']);
+    protected function setUp(): void
+    {
+        // Prepare credentials
+        $this->prepareCredentials();
 
-    // Prepare private/public keys and a default JWT token, with a simple payload
+        parent::setUp();
 
-    $this->privateKey = openssl_pkey_new(array(
-      'digest_alg' => 'sha256',
-      'private_key_bits' => 1024,
-      'private_key_type' => OPENSSL_KEYTYPE_RSA
-    ));
+        // bootstrap
+        $this->setUpDatabase($this->app);
 
-    $this->publicKey = openssl_pkey_get_details($this->privateKey)['key'];
+        // Default user, same as jwt token
+        $this->user = UserFactory::new()->create([
+            'username' => 'johndoe'
+        ]);
+    }
 
-    $this->payload = [
-      'preferred_username' => 'johndoe',
-      'resource_access' => ['myapp-backend' => []]
-    ];
+    protected function prepareCredentials()
+    {
+        // Prepare private/public keys and a default JWT token, with a simple payload
+        $this->privateKey = openssl_pkey_new([
+            'digest_alg' => 'sha256',
+            'private_key_bits' => 1024,
+            'private_key_type' => OPENSSL_KEYTYPE_RSA
+        ]);
 
-    $this->token = JWT::encode($this->payload, $this->privateKey, 'RS256');
+        $this->publicKey = openssl_pkey_get_details($this->privateKey)['key'];
 
-    // Set Keycloak Guard default configs
+        $this->payload = [
+            'preferred_username' => 'johndoe',
+            'resource_access' => ['myapp-backend' => []]
+        ];
 
-    config(['keycloak.realm_public_key' => $this->plainPublicKey($this->publicKey)]);
-    config(['keycloak.user_provider_credential' => 'username']);
-    config(['keycloak.token_principal_attribute' => 'preferred_username']);
-    config(['keycloak.append_decoded_token' => false]);
-    config(['keycloak.allowed_resources' => 'myapp-backend']);
+        $this->token = JWT::encode($this->payload, $this->privateKey, 'RS256');
+    }
 
-    // bootstrap 
+    // Default configs to make it running
+    protected function defineEnvironment($app)
+    {
+        $app['config']->set('auth.defaults.guard', 'api');
+        $app['config']->set('auth.guards.api.driver', 'keycloak');
+        $app['config']->set('auth.guards.api.provider', 'users');
+        $app['config']->set('auth.providers.users.model', User::class);
 
-    $this->setUpDatabase($this->app);
-    $this->withFactories(__DIR__ . '/Factories');
+        $app['config']->set('keycloak.realm_public_key', $this->plainPublicKey());
+        $app['config']->set('keycloak.user_provider_credential', 'username');
+        $app['config']->set('keycloak.token_principal_attribute', 'preferred_username');
+        $app['config']->set('keycloak.append_decoded_token', false);
+        $app['config']->set('keycloak.allowed_resources', 'myapp-backend');
+    }
 
-    // Default user, same as jwt token
+    protected function setUpDatabase(Application $app)
+    {
+        $app['db']->connection()->getSchemaBuilder()->create('users', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('username');
+            $table->timestamps();
+        });
+    }
 
-    $this->user = factory(User::class)->create([
-      'username' => 'johndoe'
-    ]);
-  }
+    protected function getPackageProviders($app)
+    {
+        Route::get('/foo/secret', 'KeycloakGuard\Tests\Controllers\FooController@secret')->middleware(Authenticate::class);
+        Route::get('/foo/public', 'KeycloakGuard\Tests\Controllers\FooController@public');
 
-  protected function setUpDatabase(Application $app)
-  {
-    $app['db']->connection()->getSchemaBuilder()->create('users', function (Blueprint $table) {
-      $table->increments('id');
-      $table->string('username');
-      $table->timestamps();
-    });
-  }
+        return [KeycloakGuardServiceProvider::class];
+    }
 
-  protected function getPackageProviders($app)
-  {
-    Route::get('/foo/secret', 'KeycloakGuard\Tests\Controllers\FooController@secret')->middleware(Authenticate::class);
-    Route::get('/foo/public', 'KeycloakGuard\Tests\Controllers\FooController@public');
+    // Just extract a string  from the public key, as required by config file
+    protected function plainPublicKey(): string
+    {
+        $string = str_replace('-----BEGIN PUBLIC KEY-----', '', $this->publicKey);
+        $string = trim(str_replace('-----END PUBLIC KEY-----', '', $string));
+        $string = str_replace('\n', '', $string);
 
-    return [KeycloakGuardServiceProvider::class];
-  }
+        return $string;
+    }
 
-  // Just extract a string  from the public key, as required by config file
+    // Build a diferent token with custom payload
+    protected function buildCustomToken(array $payload)
+    {
+        $payload = array_replace($this->payload, $payload);
 
-  protected function plainPublicKey($key)
-  {
-    $string = str_replace('-----BEGIN PUBLIC KEY-----', '', $key);
-    $string = trim(str_replace('-----END PUBLIC KEY-----', '', $string));
-    $string = str_replace('\n', '', $string);
+        $this->token = JWT::encode($payload, $this->privateKey, 'RS256');
+    }
 
-    return $string;
-  }
+    // Setup default token, for the default user
+     public function withKeycloakToken()
+     {
+         $this->withToken($this->token);
 
-  // Build a diferent token with custom payload
-
-  protected function buildCustomToken(array $payload)
-  {
-    $payload = array_replace($this->payload, $payload);
-
-    $this->token = JWT::encode($payload, $this->privateKey, 'RS256');
-  }
-
-  // Setup default token, for the default user
-
-  protected function withToken()
-  {
-    $this->withHeaders(['Authorization' => 'Bearer ' . $this->token]);
-
-    return $this;
-  }
+         return $this;
+     }
 }

@@ -1,8 +1,7 @@
 build
-composer.lock
 docs
 vendor
 .php_cs.cache
+.php-cs-fixer.cache
 coverage
 .phpunit.result.cache
-docker-compose.yml

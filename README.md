@@ -263,6 +263,16 @@ Auth::hasRole('myapp-frontend', 'myapp-frontend-role1') // true
 Auth::hasRole('myapp-backend', 'myapp-frontend-role1') // false
 ```
 
+# Contribute
+
+You can run this project on VSCODE with Remote Container. Make sure you will use internal VSCODE terminal (inside running container).
+
+```
+composer install
+composer test
+```
+
+
 # Contact
 
 Twitter [@robsontenorio](https://twitter.com/robsontenorio)
