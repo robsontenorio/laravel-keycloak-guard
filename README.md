@@ -163,6 +163,12 @@ Appends to the authenticated user the full decoded JWT token (`$user->token`). U
 
 Usually you API should handle one *resource_access*. But, if you handle multiples, just use a comma separated list of allowed resources accepted by API. This attribute will be confronted against `resource_access` attribute from JWT token, while authenticating.
 
+✔️ **leeway**
+
+*Default is 0*
+    
+ You can add a leeway to account for when there is a clock skew times between the signing and verifying servers.  If you are facing issues like *"Cannot handle token prior to <DATE>"* try to set it `60` (seconds). 
+
 ## Laravel Auth
 
 Changes on `config/auth.php`
