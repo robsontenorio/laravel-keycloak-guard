@@ -44,4 +44,4 @@ jobs:
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction --ansi
 
       - name: Execute tests
-        run: vendor/bin/phpunit
+        run: composer test:coverage

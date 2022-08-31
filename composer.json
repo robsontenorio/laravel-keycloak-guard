@@ -29,8 +29,8 @@
         }
     },
     "scripts": {
-        "test": "vendor/bin/phpunit",
-        "test-coverage": "phpunit --coverage-html coverage",
+        "test": "pest",
+        "test:coverage": "php -d pcov.enabled=1 ./vendor/bin/pest --coverage",
         "post-autoload-dump": [
             "@php ./vendor/bin/testbench package:discover --ansi"
         ]
@@ -46,6 +46,12 @@
         "phpunit/phpunit": "^9.5",
         "orchestra/testbench": "^7.7",
         "friendsofphp/php-cs-fixer": "^3.10",
-        "nunomaduro/collision": "^6.3"
+        "nunomaduro/collision": "^6.3",
+        "pestphp/pest": "^1.22"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     }
 }

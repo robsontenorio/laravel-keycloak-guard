@@ -265,6 +265,7 @@ You can run this project on VSCODE with Remote Container. Make sure you will use
 ```bash
 composer install
 composer test
+composer test:coverage
 ```
 
 

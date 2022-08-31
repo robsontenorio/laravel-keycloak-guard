@@ -15,5 +15,5 @@ return [
 
     'allowed_resources' => env('KEYCLOAK_ALLOWED_RESOURCES', null),
 
-    'leeway' =>  env('KEYCLOAK_LEEWAY', 0)
+    'leeway' => env('KEYCLOAK_LEEWAY', 0)
 ];
