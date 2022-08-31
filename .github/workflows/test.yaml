@@ -4,13 +4,13 @@ on: [push, pull_request]
 
 jobs:
   build-and-test:
-    name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }} 
+    name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} 
     runs-on: ubuntu-latest
     strategy:
       matrix:
         php: [8.0, 8.1]
         laravel: [8.*, 9.*]       
-        dependency-version: [prefer-lowest, prefer-stable]               
+        stability: [prefer-lowest, prefer-stable]               
         include: 
           - laravel: 8.*
             testbench: 6.*
@@ -20,7 +20,7 @@ jobs:
             collision: 6.*
          exclude:
             - laravel: 8.*
-            dependency-version: prefer-lowest
+              stability: prefer-lowest
                       
     steps:
       - name: Checkout code
@@ -41,7 +41,7 @@ jobs:
       - name: Install dependencies
         run: |
           composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" "nunomaduro/collision:${{ matrix.collision }}" --dev --no-interaction --no-update --ansi
-          composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction --ansi
+          composer update --${{ matrix.stability }} --prefer-dist --no-interaction --ansi
 
       - name: Execute tests
         run: vendor/bin/phpunit
