@@ -1,0 +1,37 @@
+name: Test package
+
+on: [push, pull_request]
+
+jobs:
+  build-and-test:
+    name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }} 
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: [8.0, 8.1, 8.2]
+        laravel: [8.*, 9.*]       
+        dependency-version: [prefer-lowest, prefer-stable]                
+                      
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.composer/cache/files
+          key: dependencies-composer-${{ hashFiles('composer.json') }}
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          # extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath
+
+      - name: Install dependencies
+        run: |
+          composer require "laravel/framework:${{ matrix.laravel }}" --no-interaction --no-update --ansi
+          composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction --ansi
+
+      - name: Execute tests
+        run: vendor/bin/phpunit
