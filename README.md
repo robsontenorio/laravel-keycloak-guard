@@ -80,36 +80,15 @@ For facades, uncomment ```$app->withFacades();``` in your boostrap app file ```b
 
 ## Keycloak Guard
 
-The Keycloak Guard configuration can be handled from Laravel `.env` file. ⚠️ Be sure all strings **are trimmed.**
 
+⚠️ When editing `.env` make sure all strings **are trimmed.**
 
-Optionally you can publish the config file.
+```bash
+# Publish config file
 
-```
 php artisan vendor:publish  --provider="KeycloakGuard\KeycloakGuardServiceProvider"
 ```
 
-
-```php
-<?php
-
-return [  
-  'realm_public_key' => env('KEYCLOAK_REALM_PUBLIC_KEY', null),
-
-  'load_user_from_database' => env('KEYCLOAK_LOAD_USER_FROM_DATABASE', true),
-    
-  'user_provider_custom_retrieve_method' => null,
-
-  'user_provider_credential' => env('KEYCLOAK_USER_PROVIDER_CREDENTIAL', 'username'),
-
-  'token_principal_attribute' => env('KEYCLOAK_TOKEN_PRINCIPAL_ATTRIBUTE', 'preferred_username'),
-
-  'append_decoded_token' => env('KEYCLOAK_APPEND_DECODED_TOKEN', false),
-
-  'allowed_resources' => env('KEYCLOAK_ALLOWED_RESOURCES', null)
-];
-
-```
 
 ✔️  **realm_public_key**
 
