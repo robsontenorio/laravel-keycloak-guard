@@ -13,8 +13,10 @@ jobs:
         include: 
           - laravel: 8.*
             testbench: 6.*
+            collision: 5.*
           - laravel: 9.*
             testbench: 7.*
+            collision: 6.*
         dependency-version: [prefer-lowest, prefer-stable]                
                       
     steps:
@@ -35,7 +37,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update --ansi
+          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" "nunomaduro/collision:${{ matrix.collision }}" --dev --no-interaction --no-update --ansi
           composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction --ansi
 
       - name: Execute tests
