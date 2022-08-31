@@ -45,3 +45,10 @@ jobs:
 
       - name: Execute tests
         run: composer test:coverage
+
+      - name: Upload to Codecov
+       uses: codecov/codecov-action@v2
+       with:
+         token: ${{ secrets.CODE_COV_TOKEN }}
+         files: ./coverage/clover.xml
+         verbose: true

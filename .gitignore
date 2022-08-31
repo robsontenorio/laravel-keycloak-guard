@@ -1,5 +1,5 @@
 vendor
 .php_cs.cache
 .php-cs-fixer.cache
-coverage
+.coverage/
 .phpunit.result.cache
