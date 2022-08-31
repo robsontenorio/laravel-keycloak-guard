@@ -182,8 +182,12 @@ Changes on `config/auth.php`
     ....
     
     'guards' => [
-        'api' => [
-            'driver' => 'keycloak', # <-- Set the API guard driver to "keycloak"
+        # <!----- 
+        #     Make sure your "api" guard look like this.
+        #     Newer Laravel instalations just removed this block.
+        #  ----> 
+        'api' => [              
+            'driver' => 'keycloak', 
             'provider' => 'users',
         ],
     ],
@@ -247,7 +251,7 @@ Ex: `Auth::token()` returns full decoded JWT token from authenticated user
 Ex:
 Whit this payload:
 
-```
+```php
 'resource_access' => [
   'myapp-backend' => [
       'roles' => [
@@ -263,7 +267,7 @@ Whit this payload:
   ]
 ]
 ```
-```
+```php
 Auth::hasRole('myapp-backend', 'myapp-backend-role1') // true
 Auth::hasRole('myapp-frontend', 'myapp-frontend-role1') // true
 Auth::hasRole('myapp-backend', 'myapp-frontend-role1') // false
@@ -273,7 +277,7 @@ Auth::hasRole('myapp-backend', 'myapp-frontend-role1') // false
 
 You can run this project on VSCODE with Remote Container. Make sure you will use internal VSCODE terminal (inside running container).
 
-```
+```bash
 composer install
 composer test
 ```
