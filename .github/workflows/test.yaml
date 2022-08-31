@@ -9,12 +9,18 @@ jobs:
     strategy:
       matrix:
         php: [8.0, 8.1]
-        laravel: [9.*]       
+        laravel: [8.*, 9.*]       
+        dependency-version: [prefer-lowest, prefer-stable]               
         include: 
+          - laravel: 8.*
+            testbench: 6.*
+            collision: 5.*
           - laravel: 9.*
             testbench: 7.*
             collision: 6.*
-        dependency-version: [prefer-lowest, prefer-stable]                
+         exclude:
+          - laravel: 8.*
+            dependency-version: prefer-lowest
                       
     steps:
       - name: Checkout code
