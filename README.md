@@ -183,7 +183,7 @@ Changes on `config/auth.php`
     
     'guards' => [
         # <!----- 
-        #     Make sure your "api" guard look like this.
+        #     Make sure your "api" guard looks like this.
         #     Newer Laravel instalations just removed this block.
         #  ----> 
         'api' => [              
