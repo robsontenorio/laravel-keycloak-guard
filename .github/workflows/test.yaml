@@ -11,9 +11,6 @@ jobs:
         php: [8.0, 8.1]
         laravel: [9.*]       
         include: 
-          - laravel: 8.*
-            testbench: 6.*
-            collision: 5.*
           - laravel: 9.*
             testbench: 7.*
             collision: 6.*
