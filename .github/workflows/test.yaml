@@ -19,8 +19,8 @@ jobs:
             testbench: 7.*
             collision: 6.*
          exclude:
-            - laravel: 8.*
-              stability: prefer-lowest
+          - laravel: 8.*
+            stability: prefer-lowest
                       
     steps:
       - name: Checkout code
