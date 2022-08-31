@@ -13,10 +13,10 @@ class KeycloakGuardServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/keycloak.php', 'keycloak');
     }
 
-    public function register()
-    {
-        Auth::extend('keycloak', function ($app, $name, array $config) {
-            return new KeycloakGuard(Auth::createUserProvider($config['provider']), $app->request);
-        });
-    }
+     public function register()
+     {
+         Auth::extend('keycloak', function ($app, $name, array $config) {
+             return new KeycloakGuard(Auth::createUserProvider($config['provider']), $app->request);
+         });
+     }
 }

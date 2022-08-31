@@ -5,6 +5,7 @@ namespace KeycloakGuard\Tests;
 use Illuminate\Hashing\BcryptHasher;
 use Illuminate\Support\Facades\Auth;
 use KeycloakGuard\Exceptions\ResourceAccessNotAllowedException;
+use KeycloakGuard\Exceptions\TokenException;
 use KeycloakGuard\Exceptions\UserNotFoundException;
 use KeycloakGuard\KeycloakGuard;
 use KeycloakGuard\Tests\Extensions\CustomUserProvider;
@@ -20,11 +21,11 @@ class AuthenticateTest extends TestCase
     /** @test */
     public function it_authenticates_the_user_when_request_any_endpoint_with_token()
     {
-        $response = $this->withKeycloakToken()->json('GET', '/foo/secret');
+        $this->withKeycloakToken()->json('GET', '/foo/secret');
 
         $this->assertEquals($this->user->username, Auth::user()->username);
 
-        $response = $this->json('GET', '/foo/public');
+        $this->json('GET', '/foo/public');
 
         $this->assertEquals($this->user->username, Auth::user()->username);
     }
@@ -47,7 +48,7 @@ class AuthenticateTest extends TestCase
             'preferred_username' => 'mary'
         ]);
 
-        $response = $this->withKeycloakToken()->json('GET', '/foo/secret');
+        $this->withKeycloakToken()->json('GET', '/foo/secret');
     }
 
     /** @test */
@@ -60,7 +61,7 @@ class AuthenticateTest extends TestCase
             'resource_access' => ['some_resouce_not_allowed' => []]
         ]);
 
-        $response = $this->withKeycloakToken()->json('GET', '/foo/secret');
+        $this->withKeycloakToken()->json('GET', '/foo/secret');
     }
 
     /** @test */
@@ -68,7 +69,7 @@ class AuthenticateTest extends TestCase
     {
         config(['keycloak.append_decoded_token' => true]);
 
-        $response = $this->withKeycloakToken()->json('GET', '/foo/secret');
+        $this->withKeycloakToken()->json('GET', '/foo/secret');
 
         $this->assertNotNull(Auth::user()->token);
     }
@@ -76,9 +77,9 @@ class AuthenticateTest extends TestCase
     /** @test */
     public function it_does_not_appends_token_to_the_user()
     {
-        config(['keycloak.append_decoded_token' => false]);       
+        config(['keycloak.append_decoded_token' => false]);
 
-        $response = $this->withKeycloakToken()->json('GET', '/foo/secret');
+        $this->withKeycloakToken()->json('GET', '/foo/secret');
 
         $this->assertNull(Auth::user()->token);
     }
@@ -88,7 +89,7 @@ class AuthenticateTest extends TestCase
     {
         config(['keycloak.load_user_from_database' => false]);
 
-        $response = $this->withKeycloakToken()->json('GET', '/foo/secret');
+        $this->withKeycloakToken()->json('GET', '/foo/secret');
 
         $this->assertCount(0, Auth::user()->getAttributes());
     }
@@ -99,7 +100,7 @@ class AuthenticateTest extends TestCase
         config(['keycloak.load_user_from_database' => false]);
         config(['keycloak.append_decoded_token' => true]);
 
-        $response = $this->withKeycloakToken()->json('GET', '/foo/secret');
+        $this->withKeycloakToken()->json('GET', '/foo/secret');
 
         $this->assertArrayHasKey('token', Auth::user()->toArray());
     }
@@ -124,7 +125,7 @@ class AuthenticateTest extends TestCase
             ]
         ]);
 
-        $response = $this->withKeycloakToken()->json('GET', '/foo/secret');
+        $this->withKeycloakToken()->json('GET', '/foo/secret');
         $this->assertTrue(Auth::hasRole('myapp-backend', 'myapp-backend-role1'));
     }
 
@@ -148,7 +149,7 @@ class AuthenticateTest extends TestCase
             ]
         ]);
 
-        $response = $this->withKeycloakToken()->json('GET', '/foo/secret');
+        $this->withKeycloakToken()->json('GET', '/foo/secret');
         $this->assertFalse(Auth::hasRole('myapp-backend', 'myapp-backend-role3'));
     }
 
@@ -172,7 +173,7 @@ class AuthenticateTest extends TestCase
             ]
         ]);
 
-        $response = $this->withKeycloakToken()->json('GET', '/foo/secret');
+        $this->withKeycloakToken()->json('GET', '/foo/secret');
         $this->assertFalse(Auth::hasRole('myapp-backend', 'myapp-frontend-role1'));
     }
 
@@ -185,7 +186,38 @@ class AuthenticateTest extends TestCase
               return new KeycloakGuard(new CustomUserProvider(new BcryptHasher(), User::class), $app->request);
           });
 
-          $response = $this->withKeycloakToken()->json('GET', '/foo/secret');
+          $this->withKeycloakToken()->json('GET', '/foo/secret');
           $this->assertTrue(Auth::user()->customRetrieve);
+      }
+
+      /** @test */
+    public function it_throws_a_exception_with_invalid_iat()
+    {
+        $this->expectException(TokenException::class);
+        $this->withoutExceptionHandling();
+
+        $this->buildCustomToken([
+            'iat' => time() + 30,   // time ahead in the future
+            'preferred_username' => 'johndoe',
+            'resource_access' => ['myapp-backend' => []]
+        ]);
+
+        $this->withKeycloakToken()->json('GET', '/foo/secret');
+    }
+
+      /** @test */
+      public function it_works_with_leeway()
+      {
+          // Allows up to 60 seconds ahead in the  future
+          config(['keycloak.leeway' => 60]);
+
+          $this->buildCustomToken([
+              'iat' => time() + 30, // time ahead in the future
+              'preferred_username' => 'johndoe',
+              'resource_access' => ['myapp-backend' => []]
+          ]);
+
+          $this->withKeycloakToken()->json('GET', '/foo/secret');
+          $this->assertEquals($this->user->username, Auth::user()->username);
       }
 }

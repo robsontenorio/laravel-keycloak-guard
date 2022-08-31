@@ -67,8 +67,7 @@ class TestCase extends Orchestra
         $app['config']->set('keycloak.user_provider_credential', 'username');
         $app['config']->set('keycloak.token_principal_attribute', 'preferred_username');
         $app['config']->set('keycloak.append_decoded_token', false);
-        $app['config']->set('keycloak.allowed_resources', 'myapp-backend');
-        $app['config']->set('keycloak.leeway', 60);
+        $app['config']->set('keycloak.allowed_resources', 'myapp-backend');        
     }
 
     protected function setUpDatabase(Application $app)
