@@ -19,7 +19,7 @@ jobs:
             testbench: 7.*
             collision: 6.*
          exclude:
-          - laravel: 8.*
+            - laravel: 8.*
             dependency-version: prefer-lowest
                       
     steps:
