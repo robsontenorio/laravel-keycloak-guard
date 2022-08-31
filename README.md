@@ -184,7 +184,7 @@ Changes on `config/auth.php`
     'guards' => [
         # <!----- 
         #     Make sure your "api" guard looks like this.
-        #     Newer Laravel instalations just removed this block.
+        #     Newer Laravel versions just removed this config block.
         #  ----> 
         'api' => [              
             'driver' => 'keycloak', 
