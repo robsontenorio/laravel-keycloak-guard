@@ -118,14 +118,16 @@ If using this feature, obviously, values defined for `user_provider_credential` 
 
 ✔️ **user_provider_credential**
 
-*Required. Default is `username`.*
+*Required.  
+Default is `username`.*
 
 
 The field from "users" table that contains the user unique identifier (eg.  username, email, nickname). This will be confronted against  `token_principal_attribute` attribute, while authenticating.
 
 ✔️ **token_principal_attribute**
 
-*Required. Default is `preferred_username`.*
+*Required.  
+Default is `preferred_username`.*
 
 The property from JWT token that contains the user identifier.
 This will be confronted against  `user_provider_credential` attribute, while authenticating.
@@ -138,13 +140,13 @@ Appends to the authenticated user the full decoded JWT token (`$user->token`). U
 
 ✔️ **allowed_resources**
 
-*Required*
+*Required*.
 
 Usually you API should handle one *resource_access*. But, if you handle multiples, just use a comma separated list of allowed resources accepted by API. This attribute will be confronted against `resource_access` attribute from JWT token, while authenticating.
 
 ✔️ **leeway**
 
-*Default is 0*
+*Default is `0`*.
     
  You can add a leeway to account for when there is a clock skew times between the signing and verifying servers.  If you are facing issues like *"Cannot handle token prior to <DATE>"* try to set it `60` (seconds). 
 
@@ -207,30 +209,34 @@ $router->group(['middleware' => 'auth'], function () {
 
 # API
 
-Simple Keycloak Guard implements `Illuminate\Contracts\Auth\Guard`. So, all Laravel default methods will be available. Ex: `Auth::user()` returns the authenticated user.
+Simple Keycloak Guard implements `Illuminate\Contracts\Auth\Guard`. So, all Laravel default methods will be available.
 
-### Default methods:
+## Default Laravel methods
 
-- check()
-- guest()
-- user()
-- id()
-- validate()
-- setUser()
+- `check()`
+- `guest()`
+- `user()`
+- `id()`
+- `validate()`
+- `setUser()`
 
 
-### Keycloak Guard methods:
+## Keycloak Guard methods
 
-- token()
-
-Ex: `Auth::token()` returns full decoded JWT token from authenticated user
-
-- hasRole('some-resource', 'some-role'):  Check if the authenticated user has especific role into a resource.
-
-Ex:
-Whit this payload:
+`token()`  
+*Returns full decoded JWT token from authenticated user.*
 
 ```php
+$token = Auth::token() 
+```
+<br>
+
+`hasRole('some-resource', 'some-role')`  
+*Check if authenticated user has a role on resource_access*
+
+```php
+// Example decoded payload
+
 'resource_access' => [
   'myapp-backend' => [
       'roles' => [
