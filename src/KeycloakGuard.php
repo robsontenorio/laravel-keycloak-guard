@@ -168,6 +168,10 @@ class KeycloakGuard implements Guard
      */
     private function validateResources()
     {
+        if ($this->config['ignore_resources_validation']) {
+            return;
+        }
+
         $token_resource_access = array_keys((array)($this->decodedToken->resource_access ?? []));
         $allowed_resources = explode(',', $this->config['allowed_resources']);
 

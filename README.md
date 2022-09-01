@@ -145,6 +145,13 @@ Appends to the authenticated user the full decoded JWT token (`$user->token`). U
 
 Usually you API should handle one *resource_access*. But, if you handle multiples, just use a comma separated list of allowed resources accepted by API. This attribute will be confronted against `resource_access` attribute from JWT token, while authenticating.
 
+✔️ **ignore_resouces_validation**
+
+*Default is `false`*.
+
+Disables entirely resources validation. It will **ignore** *allowed_resources* configuration.
+
+
 ✔️ **leeway**
 
 *Default is `0`*.

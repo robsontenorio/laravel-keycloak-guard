@@ -26,6 +26,7 @@ class TestCase extends Orchestra
         $this->prepareCredentials();
 
         parent::setUp();
+        $this->withoutExceptionHandling();
 
         // bootstrap
         $this->setUpDatabase($this->app);
@@ -59,15 +60,21 @@ class TestCase extends Orchestra
     protected function defineEnvironment($app)
     {
         $app['config']->set('auth.defaults.guard', 'api');
-        $app['config']->set('auth.guards.api.driver', 'keycloak');
-        $app['config']->set('auth.guards.api.provider', 'users');
         $app['config']->set('auth.providers.users.model', User::class);
 
-        $app['config']->set('keycloak.realm_public_key', $this->plainPublicKey());
-        $app['config']->set('keycloak.user_provider_credential', 'username');
-        $app['config']->set('keycloak.token_principal_attribute', 'preferred_username');
-        $app['config']->set('keycloak.append_decoded_token', false);
-        $app['config']->set('keycloak.allowed_resources', 'myapp-backend');
+        $app['config']->set('auth.guards.api', [
+            'driver' => 'keycloak',
+            'provider' => 'users'
+        ]);
+
+        $app['config']->set('keycloak', [
+            'realm_public_key' => $this->plainPublicKey(),
+            'user_provider_credential' => 'username',
+            'token_principal_attribute' => 'preferred_username',
+            'append_decoded_token' => false,
+            'allowed_resources' => 'myapp-backend',
+            'ignore_resources_validation' => false,
+        ]);
     }
 
     protected function setUpDatabase(Application $app)

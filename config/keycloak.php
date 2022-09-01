@@ -15,5 +15,7 @@ return [
 
     'allowed_resources' => env('KEYCLOAK_ALLOWED_RESOURCES', null),
 
+    'ignore_resources_validation' => env('KEYCLOAK_IGNORE_RESOURCES_VALIDATION', false),
+
     'leeway' => env('KEYCLOAK_LEEWAY', 0)
 ];

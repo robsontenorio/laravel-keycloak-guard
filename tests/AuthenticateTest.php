@@ -2,6 +2,7 @@
 
 namespace KeycloakGuard\Tests;
 
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Hashing\BcryptHasher;
 use Illuminate\Support\Facades\Auth;
 use KeycloakGuard\Exceptions\ResourceAccessNotAllowedException;
@@ -45,20 +46,8 @@ class AuthenticateTest extends TestCase
 
     public function test_forbiden_when_request_a_protected_endpoint_without_token()
     {
-        $response = $this->json('GET', '/foo/secret');
-        $response->assertStatus(401);
-
-        $response = $this->json('POST', '/foo/secret');
-        $response->assertStatus(401);
-
-        $response = $this->json('PUT', '/foo/secret');
-        $response->assertStatus(401);
-
-        $response = $this->json('PATCH', '/foo/secret');
-        $response->assertStatus(401);
-
-        $response = $this->json('DELETE', '/foo/secret');
-        $response->assertStatus(401);
+        $this->expectException(AuthenticationException::class);
+        $this->json('GET', '/foo/secret');
     }
 
     public function test_laravel_default_interface_for_authenticated_users()
@@ -82,22 +71,9 @@ class AuthenticateTest extends TestCase
     public function test_throws_a_exception_when_user_is_not_found()
     {
         $this->expectException(UserNotFoundException::class);
-        $this->withoutExceptionHandling();
 
         $this->buildCustomToken([
             'preferred_username' => 'mary'
-        ]);
-
-        $this->withKeycloakToken()->json('GET', '/foo/secret');
-    }
-
-    public function test_throws_a_exception_when_resource_access_is_not_allowed_by_api()
-    {
-        $this->expectException(ResourceAccessNotAllowedException::class);
-        $this->withoutExceptionHandling();
-
-        $this->buildCustomToken([
-            'resource_access' => ['some_resouce_not_allowed' => []]
         ]);
 
         $this->withKeycloakToken()->json('GET', '/foo/secret');
@@ -139,6 +115,30 @@ class AuthenticateTest extends TestCase
         $this->withKeycloakToken()->json('GET', '/foo/secret');
 
         $this->assertArrayHasKey('token', Auth::user()->toArray());
+    }
+
+    public function test_throws_a_exception_when_resource_access_is_not_allowed_by_api()
+    {
+        $this->expectException(ResourceAccessNotAllowedException::class);
+
+        $this->buildCustomToken([
+            'resource_access' => ['some_resouce_not_allowed' => []]
+        ]);
+
+        $this->withKeycloakToken()->json('GET', '/foo/secret');
+    }
+
+    public function test_ignores_resources_validation()
+    {
+        config(['keycloak.ignore_resources_validation' => true]);
+
+        $this->buildCustomToken([
+            'resource_access' => ['some_resouce_not_allowed' => []]
+        ]);
+
+        $this->withKeycloakToken()->json('GET', '/foo/secret');
+
+        $this->assertEquals(Auth::id(), $this->user->id);
     }
 
     public function test_check_user_has_role_in_resource()
@@ -210,22 +210,21 @@ class AuthenticateTest extends TestCase
         $this->assertFalse(Auth::hasRole('myapp-backend', 'myapp-frontend-role1'));
     }
 
-      public function test_custom_user_retrieve_method()
-      {
-          config(['keycloak.user_provider_custom_retrieve_method' => 'custom_retrieve']);
+    public function test_custom_user_retrieve_method()
+    {
+        config(['keycloak.user_provider_custom_retrieve_method' => 'custom_retrieve']);
 
-          Auth::extend('keycloak', function ($app, $name, array $config) {
-              return new KeycloakGuard(new CustomUserProvider(new BcryptHasher(), User::class), $app->request);
-          });
+        Auth::extend('keycloak', function ($app, $name, array $config) {
+            return new KeycloakGuard(new CustomUserProvider(new BcryptHasher(), User::class), $app->request);
+        });
 
-          $this->withKeycloakToken()->json('GET', '/foo/secret');
-          $this->assertTrue(Auth::user()->customRetrieve);
-      }
+        $this->withKeycloakToken()->json('GET', '/foo/secret');
+        $this->assertTrue(Auth::user()->customRetrieve);
+    }
 
     public function test_throws_a_exception_with_invalid_iat()
     {
         $this->expectException(TokenException::class);
-        $this->withoutExceptionHandling();
 
         $this->buildCustomToken([
             'iat' => time() + 30,   // time ahead in the future
