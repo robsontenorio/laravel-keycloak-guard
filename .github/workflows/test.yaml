@@ -1,0 +1,54 @@
+name: Test package
+
+on: [push, pull_request]
+
+jobs:
+  build-and-test:
+    name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} 
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: [8.0, 8.1]
+        laravel: [8.*, 9.*]       
+        stability: [prefer-lowest, prefer-stable]               
+        include: 
+          - laravel: 8.*
+            testbench: 6.*
+            collision: 5.*
+          - laravel: 9.*
+            testbench: 7.*
+            collision: 6.*
+        exclude:
+          - laravel: 8.*
+            stability: prefer-lowest
+                      
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.composer/cache/files
+          key: dependencies-composer-${{ hashFiles('composer.json') }}
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          # extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath
+
+      - name: Install dependencies
+        run: |
+          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" "nunomaduro/collision:${{ matrix.collision }}" --dev --no-interaction --no-update --ansi
+          composer update --${{ matrix.stability }} --prefer-dist --no-interaction --ansi
+
+      - name: Execute tests
+        run: composer test:coverage
+
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODE_COV_TOKEN }}
+          files: .coverage/clover.xml
+          verbose: true

@@ -5,6 +5,7 @@
 &nbsp;
         <img src="https://img.shields.io/packagist/v/robsontenorio/laravel-keycloak-guard.svg" />
         <img src="https://img.shields.io/packagist/dt/robsontenorio/laravel-keycloak-guard.svg" />
+      <img src="https://codecov.io/gh/robsontenorio/laravel-keycloak-guard/branch/master/graph/badge.svg?token=8ZpDarpss1"/>
 
 </p>
 
@@ -80,36 +81,15 @@ For facades, uncomment ```$app->withFacades();``` in your boostrap app file ```b
 
 ## Keycloak Guard
 
-The Keycloak Guard configuration can be handled from Laravel `.env` file. ⚠️ Be sure all strings **are trimmed.**
 
+⚠️ When editing `.env` make sure all strings **are trimmed.**
 
-Optionally you can publish the config file.
+```bash
+# Publish config file
 
-```
 php artisan vendor:publish  --provider="KeycloakGuard\KeycloakGuardServiceProvider"
 ```
 
-
-```php
-<?php
-
-return [  
-  'realm_public_key' => env('KEYCLOAK_REALM_PUBLIC_KEY', null),
-
-  'load_user_from_database' => env('KEYCLOAK_LOAD_USER_FROM_DATABASE', true),
-    
-  'user_provider_custom_retrieve_method' => null,
-
-  'user_provider_credential' => env('KEYCLOAK_USER_PROVIDER_CREDENTIAL', 'username'),
-
-  'token_principal_attribute' => env('KEYCLOAK_TOKEN_PRINCIPAL_ATTRIBUTE', 'preferred_username'),
-
-  'append_decoded_token' => env('KEYCLOAK_APPEND_DECODED_TOKEN', false),
-
-  'allowed_resources' => env('KEYCLOAK_ALLOWED_RESOURCES', null)
-];
-
-```
 
 ✔️  **realm_public_key**
 
@@ -139,14 +119,16 @@ If using this feature, obviously, values defined for `user_provider_credential` 
 
 ✔️ **user_provider_credential**
 
-*Required. Default is `username`.*
+*Required.  
+Default is `username`.*
 
 
 The field from "users" table that contains the user unique identifier (eg.  username, email, nickname). This will be confronted against  `token_principal_attribute` attribute, while authenticating.
 
 ✔️ **token_principal_attribute**
 
-*Required. Default is `preferred_username`.*
+*Required.  
+Default is `preferred_username`.*
 
 The property from JWT token that contains the user identifier.
 This will be confronted against  `user_provider_credential` attribute, while authenticating.
@@ -159,9 +141,37 @@ Appends to the authenticated user the full decoded JWT token (`$user->token`). U
 
 ✔️ **allowed_resources**
 
-*Required*
+*Required*.
 
 Usually you API should handle one *resource_access*. But, if you handle multiples, just use a comma separated list of allowed resources accepted by API. This attribute will be confronted against `resource_access` attribute from JWT token, while authenticating.
+
+✔️ **ignore_resouces_validation**
+
+*Default is `false`*.
+
+Disables entirely resources validation. It will **ignore** *allowed_resources* configuration.
+
+✔️ **leeway**
+
+*Default is `0`*.
+    
+ You can add a leeway to account for when there is a clock skew times between the signing and verifying servers.  If you are facing issues like *"Cannot handle token prior to <DATE>"* try to set it `60` (seconds).
+
+ ✔️ **input_key**
+
+*Default is `null`.*
+
+By default this package **always** will look at first for a `Bearer` token. Additionally, if this option is eneable it will try to get token from this custom request param.
+
+```php
+// keycloak.php
+'input_key' => 'api_token'
+
+// If there is no Bearer token on request it will use `api_token` request param
+GET  $this->get("/foo/secret?api_token=xxxxx")
+POST $this->post("/foo/secret", ["api_token" => "xxxxx"])
+```
+
 
 ## Laravel Auth
 
@@ -176,8 +186,12 @@ Changes on `config/auth.php`
     ....
     
     'guards' => [
-        'api' => [
-            'driver' => 'keycloak', # <-- Set the API guard driver to "keycloak"
+        # <!----- 
+        #     Make sure your "api" guard looks like this.
+        #     Newer Laravel versions just removed this config block.
+        #  ----> 
+        'api' => [              
+            'driver' => 'keycloak', 
             'provider' => 'users',
         ],
     ],
@@ -218,30 +232,34 @@ $router->group(['middleware' => 'auth'], function () {
 
 # API
 
-Simple Keycloak Guard implements `Illuminate\Contracts\Auth\Guard`. So, all Laravel default methods will be available. Ex: `Auth::user()` returns the authenticated user.
+Simple Keycloak Guard implements `Illuminate\Contracts\Auth\Guard`. So, all Laravel default methods will be available.
 
-### Default methods:
+## Default Laravel methods
 
-- check()
-- guest()
-- user()
-- id()
-- validate()
-- setUser()
+- `check()`
+- `guest()`
+- `user()`
+- `id()`
+- `validate()`
+- `setUser()`
 
 
-### Keycloak Guard methods:
+## Keycloak Guard methods
 
-- token()
+`token()`  
+*Returns full decoded JWT token from authenticated user.*
 
-Ex: `Auth::token()` returns full decoded JWT token from authenticated user
-
-- hasRole('some-resource', 'some-role'):  Check if the authenticated user has especific role into a resource.
-
-Ex:
-Whit this payload:
-
+```php
+$token = Auth::token()  // or Auth::user()->token()
 ```
+<br>
+
+`hasRole('some-resource', 'some-role')`  
+*Check if authenticated user has a role on resource_access*
+
+```php
+// Example decoded payload
+
 'resource_access' => [
   'myapp-backend' => [
       'roles' => [
@@ -257,11 +275,22 @@ Whit this payload:
   ]
 ]
 ```
-```
+```php
 Auth::hasRole('myapp-backend', 'myapp-backend-role1') // true
 Auth::hasRole('myapp-frontend', 'myapp-frontend-role1') // true
 Auth::hasRole('myapp-backend', 'myapp-frontend-role1') // false
 ```
+
+# Contribute
+
+You can run this project on VSCODE with Remote Container. Make sure you will use internal VSCODE terminal (inside running container).
+
+```bash
+composer install
+composer test
+composer test:coverage
+```
+
 
 # Contact
 
