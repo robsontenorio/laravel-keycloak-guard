@@ -151,12 +151,27 @@ Usually you API should handle one *resource_access*. But, if you handle multiple
 
 Disables entirely resources validation. It will **ignore** *allowed_resources* configuration.
 
-
 ✔️ **leeway**
 
 *Default is `0`*.
     
- You can add a leeway to account for when there is a clock skew times between the signing and verifying servers.  If you are facing issues like *"Cannot handle token prior to <DATE>"* try to set it `60` (seconds). 
+ You can add a leeway to account for when there is a clock skew times between the signing and verifying servers.  If you are facing issues like *"Cannot handle token prior to <DATE>"* try to set it `60` (seconds).
+
+ ✔️ **input_key**
+
+*Default is `null`.*
+
+By default this package **always** will look at first for a `Bearer` token. Additionally, if this option is eneable it will try to get token from this custom request param.
+
+```php
+// keycloak.php
+'input_key' => 'api_token'
+
+// If there is no Bearer token on request it will use `api_token` request param
+GET  $this->get("/foo/secret?api_token=xxxxx")
+POST $this->post("/foo/secret", ["api_token" => "xxxxx"])
+```
+
 
 ## Laravel Auth
 

@@ -15,10 +15,10 @@ use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
 {
-    private OpenSSLAsymmetricKey $privateKey;
-    private string $publicKey;
-    private array $payload;
-    private string $token;
+    public OpenSSLAsymmetricKey $privateKey;
+    public string $publicKey;
+    public array $payload;
+    public string $token;
 
     protected function setUp(): void
     {

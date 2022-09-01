@@ -235,18 +235,40 @@ class AuthenticateTest extends TestCase
         $this->withKeycloakToken()->json('GET', '/foo/secret');
     }
 
-      public function test_works_with_leeway()
-      {
-          // Allows up to 60 seconds ahead in the  future
-          config(['keycloak.leeway' => 60]);
+    public function test_works_with_leeway()
+    {
+        // Allows up to 60 seconds ahead in the  future
+        config(['keycloak.leeway' => 60]);
 
-          $this->buildCustomToken([
-              'iat' => time() + 30, // time ahead in the future
-              'preferred_username' => 'johndoe',
-              'resource_access' => ['myapp-backend' => []]
-          ]);
+        $this->buildCustomToken([
+            'iat' => time() + 30, // time ahead in the future
+            'preferred_username' => 'johndoe',
+            'resource_access' => ['myapp-backend' => []]
+        ]);
 
-          $this->withKeycloakToken()->json('GET', '/foo/secret');
-          $this->assertEquals($this->user->username, Auth::user()->username);
-      }
+        $this->withKeycloakToken()->json('GET', '/foo/secret');
+        $this->assertEquals($this->user->username, Auth::user()->username);
+    }
+
+    public function test_authenticates_with_custom_input_key()
+    {
+        config(['keycloak.input_key' => "api_token"]);
+
+        $this->json('GET', '/foo/secret?api_token='.$this->token);
+
+        $this->assertEquals(Auth::id(), $this->user->id);
+
+        $this->json('POST', '/foo/secret', ['api_token' => $this->token]);
+    }
+
+    public function test_authentication_prefers_bearer_token_over_with_custom_input_key()
+    {
+        config(['keycloak.input_key' => "api_token"]);
+
+        $this->withKeycloakToken()->json('GET', '/foo/secret?api_token=some-junk');
+
+        $this->assertEquals(Auth::id(), $this->user->id);
+
+        $this->json('POST', '/foo/secret', ['api_token' => $this->token]);
+    }
 }

@@ -16,6 +16,7 @@ class KeycloakGuard implements Guard
     private $user;
     private $provider;
     private $decodedToken;
+    private Request $request;
 
     public function __construct(UserProvider $provider, Request $request)
     {
@@ -36,7 +37,7 @@ class KeycloakGuard implements Guard
     private function authenticate()
     {
         try {
-            $this->decodedToken = Token::decode($this->request->bearerToken(), $this->config['realm_public_key'], $this->config['leeway']);
+            $this->decodedToken = Token::decode($this->getTokenForRequest(), $this->config['realm_public_key'], $this->config['leeway']);
         } catch (\Exception $e) {
             throw new TokenException($e->getMessage());
         }
@@ -49,10 +50,22 @@ class KeycloakGuard implements Guard
     }
 
     /**
-     * Determine if the current user is authenticated.
+     * Get the token for the current request.
      *
-     * @return bool
+     * @return string
      */
+    public function getTokenForRequest()
+    {
+        $inputKey = $this->config['input_key'] ?? "";
+
+        return $this->request->bearerToken() ?? $this->request->input($inputKey);
+    }
+
+    /**
+       * Determine if the current user is authenticated.
+       *
+       * @return bool
+       */
     public function check()
     {
         return !is_null($this->user());

@@ -17,5 +17,7 @@ return [
 
     'ignore_resources_validation' => env('KEYCLOAK_IGNORE_RESOURCES_VALIDATION', false),
 
-    'leeway' => env('KEYCLOAK_LEEWAY', 0)
+    'leeway' => env('KEYCLOAK_LEEWAY', 0),
+
+    'input_key' => env('KEYCLOAK_TOKEN_INPUT_KEY', null)
 ];
