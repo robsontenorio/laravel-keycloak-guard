@@ -228,7 +228,7 @@ Simple Keycloak Guard implements `Illuminate\Contracts\Auth\Guard`. So, all Lara
 *Returns full decoded JWT token from authenticated user.*
 
 ```php
-$token = Auth::token() 
+$token = Auth::token()  // or Auth::user()->token()
 ```
 <br>
 

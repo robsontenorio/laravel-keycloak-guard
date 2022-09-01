@@ -18,13 +18,27 @@ class AuthenticateTest extends TestCase
         parent::setUp();
     }
 
-    public function test_authenticates_the_user_when_request_any_endpoint_with_token()
+    public function test_authenticates_the_user_when_requesting_a_private_endpoint_with_token()
     {
         $this->withKeycloakToken()->json('GET', '/foo/secret');
-
         $this->assertEquals($this->user->username, Auth::user()->username);
 
-        $this->json('GET', '/foo/public');
+        $this->withKeycloakToken()->json('POST', '/foo/secret');
+        $this->assertEquals($this->user->username, Auth::user()->username);
+
+        $this->withKeycloakToken()->json('PUT', '/foo/secret');
+        $this->assertEquals($this->user->username, Auth::user()->username);
+
+        $this->withKeycloakToken()->json('PATCH', '/foo/secret');
+        $this->assertEquals($this->user->username, Auth::user()->username);
+
+        $this->withKeycloakToken()->json('DELETE', '/foo/secret');
+        $this->assertEquals($this->user->username, Auth::user()->username);
+    }
+
+    public function test_authenticates_the_user_when_requesting_an_public_endpoint_with_token()
+    {
+        $this->withKeycloakToken()->json('GET', '/foo/public');
 
         $this->assertEquals($this->user->username, Auth::user()->username);
     }
@@ -32,8 +46,37 @@ class AuthenticateTest extends TestCase
     public function test_forbiden_when_request_a_protected_endpoint_without_token()
     {
         $response = $this->json('GET', '/foo/secret');
-
         $response->assertStatus(401);
+
+        $response = $this->json('POST', '/foo/secret');
+        $response->assertStatus(401);
+
+        $response = $this->json('PUT', '/foo/secret');
+        $response->assertStatus(401);
+
+        $response = $this->json('PATCH', '/foo/secret');
+        $response->assertStatus(401);
+
+        $response = $this->json('DELETE', '/foo/secret');
+        $response->assertStatus(401);
+    }
+
+    public function test_laravel_default_interface_for_authenticated_users()
+    {
+        $this->withKeycloakToken()->json('GET', '/foo/secret');
+
+        $this->assertEquals(Auth::hasUser(), true);
+        $this->assertEquals(Auth::guest(), false);
+        $this->assertEquals(Auth::id(), $this->user->id);
+    }
+
+    public function test_laravel_default_interface_for_unathenticated_users()
+    {
+        $this->json('GET', '/foo/public');
+
+        $this->assertEquals(Auth::hasUser(), false);
+        $this->assertEquals(Auth::guest(), true);
+        $this->assertEquals(Auth::id(), null);
     }
 
     public function test_throws_a_exception_when_user_is_not_found()
@@ -67,6 +110,7 @@ class AuthenticateTest extends TestCase
         $this->withKeycloakToken()->json('GET', '/foo/secret');
 
         $this->assertNotNull(Auth::user()->token);
+        $this->assertEquals(json_decode(Auth::token()), Auth::user()->token);
     }
 
     public function test_does_not_appends_token_to_the_user()
@@ -166,7 +210,7 @@ class AuthenticateTest extends TestCase
         $this->assertFalse(Auth::hasRole('myapp-backend', 'myapp-frontend-role1'));
     }
 
-      public function teststom_user_retrieve_method()
+      public function test_custom_user_retrieve_method()
       {
           config(['keycloak.user_provider_custom_retrieve_method' => 'custom_retrieve']);
 

@@ -81,8 +81,8 @@ class TestCase extends Orchestra
 
     protected function getPackageProviders($app)
     {
-        Route::get('/foo/secret', 'KeycloakGuard\Tests\Controllers\FooController@secret')->middleware(Authenticate::class);
-        Route::get('/foo/public', 'KeycloakGuard\Tests\Controllers\FooController@public');
+        Route::any('/foo/secret', 'KeycloakGuard\Tests\Controllers\FooController@secret')->middleware(Authenticate::class);
+        Route::any('/foo/public', 'KeycloakGuard\Tests\Controllers\FooController@public');
 
         return [KeycloakGuardServiceProvider::class];
     }

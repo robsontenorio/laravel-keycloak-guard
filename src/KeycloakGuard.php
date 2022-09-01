@@ -78,6 +78,17 @@ class KeycloakGuard implements Guard
         return !$this->check();
     }
 
+     /**
+     * Set the current user.
+     *
+     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
+     * @return void
+     */
+    public function setUser(Authenticatable $user)
+    {
+        $this->user = $user;
+    }
+
     /**
      * Get the currently authenticated user.
      *
@@ -108,6 +119,16 @@ class KeycloakGuard implements Guard
         }
     }
 
+     /**
+     * Returns full decoded JWT token from athenticated user
+     *
+     * @return mixed|null
+     */
+    public function token()
+    {
+        return json_encode($this->decodedToken);
+    }
+
     /**
      * Validate a user's credentials.
      *
@@ -116,10 +137,6 @@ class KeycloakGuard implements Guard
      */
     public function validate(array $credentials = [])
     {
-        if (!$this->decodedToken) {
-            return false;
-        }
-
         $this->validateResources();
 
         if ($this->config['load_user_from_database']) {
@@ -145,17 +162,6 @@ class KeycloakGuard implements Guard
     }
 
     /**
-     * Set the current user.
-     *
-     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
-     * @return void
-     */
-    public function setUser(Authenticatable $user)
-    {
-        $this->user = $user;
-    }
-
-    /**
      * Validate if authenticated user has a valid resource
      *
      * @return void
@@ -168,16 +174,6 @@ class KeycloakGuard implements Guard
         if (count(array_intersect($token_resource_access, $allowed_resources)) == 0) {
             throw new ResourceAccessNotAllowedException("The decoded JWT token has not a valid `resource_access` allowed by API. Allowed resources by API: ".$this->config['allowed_resources']);
         }
-    }
-
-    /**
-     * Returns full decoded JWT token from athenticated user
-     *
-     * @return mixed|null
-     */
-    public function token()
-    {
-        return json_encode($this->decodedToken);
     }
 
     /**
