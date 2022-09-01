@@ -11,7 +11,8 @@
 	"settings": {
 		"terminal.integrated.defaultProfile.linux": "zsh",
 		"[php]": {
-			"editor.defaultFormatter": "junstyle.php-cs-fixer"
+			"editor.defaultFormatter": "junstyle.php-cs-fixer",
+			"editor.formatOnSave": true
 		},
 		"php-cs-fixer.executablePath": "/var/www/app/vendor/bin/php-cs-fixer",
 		"php-cs-fixer.config": "/var/www/app/.php-cs-fixer.php",
