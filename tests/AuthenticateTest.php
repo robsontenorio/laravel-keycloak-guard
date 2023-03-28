@@ -209,6 +209,76 @@ class AuthenticateTest extends TestCase
         $this->withKeycloakToken()->json('GET', '/foo/secret');
         $this->assertFalse(Auth::hasRole('myapp-backend', 'myapp-frontend-role1'));
     }
+    
+    public function test_check_user_has_any_role_in_resource()
+    {
+        $this->buildCustomToken([
+            'resource_access' => [
+                'myapp-backend' => [
+                    'roles' => [
+                        'myapp-backend-role1',
+                        'myapp-backend-role2'
+                    ]
+                ],
+                'myapp-frontend' => [
+                    'roles' => [
+                        'myapp-frontend-role1',
+                        'myapp-frontend-role2'
+                    ]
+                ]
+            ]
+        ]);
+
+        $this->withKeycloakToken()->json('GET', '/foo/secret');
+        $this->assertTrue(Auth::hasAnyRole('myapp-backend', ['myapp-backend-role1', 'myapp-backend-role3']));
+    }
+
+    public function test_check_user_no_has_any_role_in_resource()
+    {
+        $this->buildCustomToken([
+            'resource_access' => [
+                'myapp-backend' => [
+                    'roles' => [
+                        'myapp-backend-role1',
+                        'myapp-backend-role2'
+                    ]
+                ],
+                'myapp-frontend' => [
+                    'roles' => [
+                        'myapp-frontend-role1',
+                        'myapp-frontend-role2'
+                    ]
+                ]
+            ]
+        ]);
+
+        $this->withKeycloakToken()->json('GET', '/foo/secret');
+        $this->assertFalse(Auth::hasAnyRole('myapp-backend', ['myapp-backend-role3', 'myapp-backend-role4']));
+    }
+
+    public function test_prevent_cross_roles_resources_with_any_role()
+    {
+        $this->buildCustomToken([
+            'resource_access' => [
+                'myapp-backend' => [
+                    'roles' => [
+                        'myapp-backend-role1',
+                        'myapp-backend-role2'
+                    ]
+                ],
+                'myapp-frontend' => [
+                    'roles' => [
+                        'myapp-frontend-role1',
+                        'myapp-frontend-role2'
+                    ]
+                ]
+            ]
+        ]);
+
+        $this->withKeycloakToken()->json('GET', '/foo/secret');
+        $this->assertFalse(Auth::hasAnyRole('myapp-backend', ['myapp-frontend-role1', 'myapp-frontend-role2']));
+    }
+
 
     public function test_custom_user_retrieve_method()
     {
