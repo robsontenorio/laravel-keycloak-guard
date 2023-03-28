@@ -48,7 +48,7 @@ This package helps you authenticate users on a Laravel API based on JWT tokens g
    - Verify token expiration time.
    - Verify if my API allows `resource access` from token.
 
-1. If everything is ok, find the user on database and authenticate it on my API.
+1. If everything is ok, then find the user on database and authenticate it on my API.
 
 1. Optionally, the user can be created / updated in the API users database.
 
@@ -156,7 +156,7 @@ You can add a leeway to account for when there is a clock skew times between the
 
 _Default is `null`._
 
-By default this package **always** will look at first for a `Bearer` token. Additionally, if this option is eneable it will try to get token from this custom request param.
+By default this package **always** will look at first for a `Bearer` token. Additionally, if this option is enabled, then it will try to get a token from this custom request param.
 
 ```php
 // keycloak.php
