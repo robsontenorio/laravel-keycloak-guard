@@ -9,7 +9,7 @@
 
 </p>
 
-# Simple Keycloak Guard for Laravel / Lumen
+# Simple Keycloak Guard for Laravel
 
 This package helps you authenticate users on a Laravel API based on JWT tokens generated from **Keycloak Server**.
 
