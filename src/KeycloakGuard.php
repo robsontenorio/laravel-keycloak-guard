@@ -214,4 +214,29 @@ class KeycloakGuard implements Guard
 
         return false;
     }
+    
+    /**
+     * Check if authenticated user has a any role into resource
+     * @param string $resource
+     * @param string $role
+     * @return bool
+     */
+    public function hasAnyRole($resource, array $roles)
+    {
+        $token_resource_access = (array)$this->decodedToken->resource_access;
+
+        if (array_key_exists($resource, $token_resource_access)) {
+            $token_resource_values = (array)$token_resource_access[$resource];
+
+            if (array_key_exists('roles', $token_resource_values)) {
+                foreach ($roles as $role) {
+                    if (in_array($role, $token_resource_values['roles'])) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
 }
