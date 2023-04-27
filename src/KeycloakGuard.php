@@ -12,11 +12,11 @@ use KeycloakGuard\Exceptions\UserNotFoundException;
 
 class KeycloakGuard implements Guard
 {
-    private $config;
-    private $user;
-    private $provider;
-    private $decodedToken;
-    private Request $request;
+    protected $config;
+    protected $user;
+    protected $provider;
+    protected $decodedToken;
+    protected Request $request;
 
     public function __construct(UserProvider $provider, Request $request)
     {
@@ -34,7 +34,7 @@ class KeycloakGuard implements Guard
      *
      * @return mixed
      */
-    private function authenticate()
+    protected function authenticate()
     {
         try {
             $this->decodedToken = Token::decode($this->getTokenForRequest(), $this->config['realm_public_key'], $this->config['leeway']);
@@ -179,7 +179,7 @@ class KeycloakGuard implements Guard
      *
      * @return void
      */
-    private function validateResources()
+    protected function validateResources()
     {
         if ($this->config['ignore_resources_validation']) {
             return;
