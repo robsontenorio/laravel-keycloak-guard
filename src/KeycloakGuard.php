@@ -16,6 +16,7 @@ class KeycloakGuard implements Guard
     protected $user;
     protected $provider;
     protected $decodedToken;
+    protected $roles;
     protected Request $request;
 
     public function __construct(UserProvider $provider, Request $request)
@@ -130,12 +131,15 @@ class KeycloakGuard implements Guard
   private function validateResources()
   {
     $token_role_property = $this->config['token_role_property'];
-    $token_resource_access = array_keys((array)($this->decodedToken->{$token_role_property} ?? []));
-    $allowed_resources = explode(',', $this->config['allowed_resources']);
+    $bpRoles = (array)$this->decodedToken->{$token_role_property};
 
-    if (count(array_intersect($token_resource_access, $allowed_resources)) == 0) {
-        throw new ResourceAccessNotAllowedException("The decoded JWT token has not a valid `resource_access` allowed by API. Allowed resources by API: ".$this->config['allowed_resources']);
+    // Extract roles from first BP
+    $this->roles = array_shift($bpRoles);
+
+    if (!is_array($this->roles)) {
+      throw new ResourceAccessNotAllowedException("The decoded JWT token has not a valid roles");
     }
+
 }
     
     
