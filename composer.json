@@ -15,7 +15,8 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "firebase/php-jwt": "^5.0"
+        "firebase/php-jwt": "^6.3",
+        "php": "^8.0"
     },
     "autoload": {
         "psr-4": {
@@ -28,8 +29,11 @@
         }
     },
     "scripts": {
-        "test": "vendor/bin/phpunit",
-        "test-coverage": "phpunit --coverage-html coverage"
+        "test": "pest",
+        "test:coverage": "php -d pcov.enabled=1 ./vendor/bin/pest --coverage --coverage-clover=.coverage/clover.xml --coverage-html=.coverage",
+        "post-autoload-dump": [
+            "@php ./vendor/bin/testbench package:discover --ansi"
+        ]
     },
     "extra": {
         "laravel": {
@@ -39,7 +43,15 @@
         }
     },
     "require-dev": {
-        "phpunit/phpunit": "^7.3@dev",
-        "orchestra/testbench": "^3.7@dev"
+        "phpunit/phpunit": "^9.5",
+        "orchestra/testbench": "^7.7",
+        "friendsofphp/php-cs-fixer": "^3.10",
+        "nunomaduro/collision": "^6.3",
+        "pestphp/pest": "^1.22"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     }
 }
