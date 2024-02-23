@@ -241,6 +241,7 @@ Simple Keycloak Guard implements `Illuminate\Contracts\Auth\Guard`. So, all Lara
 
 ## Keycloak Guard methods
 
+#### Token
 `token()`
 _Returns full decoded JWT token from authenticated user._
 
@@ -248,8 +249,7 @@ _Returns full decoded JWT token from authenticated user._
 $token = Auth::token()  // or Auth::user()->token()
 ```
 
-<br>
-
+#### Role
 `hasRole('some-resource', 'some-role')`
 _Check if authenticated user has a role on resource_access_
 
@@ -285,6 +285,30 @@ _Check if the authenticated user has any of the roles in resource_access_
 Auth::hasAnyRole('myapp-backend', ['myapp-backend-role1', 'myapp-backend-role3']) // true
 Auth::hasAnyRole('myapp-frontend', ['myapp-frontend-role1', 'myapp-frontend-role3']) // true
 Auth::hasAnyRole('myapp-backend', ['myapp-frontend-role1', 'myapp-frontend-role2']) // false
+```
+
+#### Scope
+`hasScope('some-scope')`
+_Check if authenticated user has a scope_
+
+```json
+{
+    "scope": "scope-a scope-b scope-c",
+}
+```
+
+```php
+Auth::hasScope('scope-a') // true
+Auth::hasScope('scope-d') // false
+```
+
+`hasAnyScopes(['scope-a', 'scope-c'])`
+_Check if the authenticated user has any of the scopes_
+
+```php
+Auth::hasAnyScope(['scope-a', 'scope-c']) // true
+Auth::hasAnyScope(['scope-a', 'scope-d']) // true
+Auth::hasAnyScope(['scope-f', 'scope-k']) // false
 ```
 
 # Contribute
