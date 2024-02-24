@@ -279,6 +279,46 @@ class AuthenticateTest extends TestCase
         $this->assertFalse(Auth::hasAnyRole('myapp-backend', ['myapp-frontend-role1', 'myapp-frontend-role2']));
     }
 
+    public function test_check_user_has_scope()
+    {
+        $this->buildCustomToken([
+            'scope' => 'scope-a scope-b scope-c',
+        ]);
+
+        $this->withKeycloakToken()->json('GET', '/foo/secret');
+        $this->assertTrue(Auth::hasScope('scope-a'));
+    }
+
+    public function test_check_user_no_has_scope()
+    {
+        $this->buildCustomToken([
+            'scope' => 'scope-a scope-b scope-c',
+        ]);
+
+        $this->withKeycloakToken()->json('GET', '/foo/secret');
+        $this->assertFalse(Auth::hasScope('scope-d'));
+    }
+
+    public function test_check_user_has_any_scope()
+    {
+        $this->buildCustomToken([
+            'scope' => 'scope-a scope-b scope-c',
+        ]);
+
+        $this->withKeycloakToken()->json('GET', '/foo/secret');
+        $this->assertTrue(Auth::hasAnyScope(['scope-a', 'scope-c']));
+    }
+
+    public function test_check_user_no_has_any_scope()
+    {
+        $this->buildCustomToken([
+            'scope' => 'scope-a scope-b scope-c',
+        ]);
+
+        $this->withKeycloakToken()->json('GET', '/foo/secret');
+        $this->assertFalse(Auth::hasAnyScope(['scope-f', 'scope-k']));
+    }
+
     public function test_custom_user_retrieve_method()
     {
         config(['keycloak.user_provider_custom_retrieve_method' => 'custom_retrieve']);
