@@ -302,7 +302,7 @@ Auth::hasScope('scope-a') // true
 Auth::hasScope('scope-d') // false
 ```
 
-`hasAnyScopes(['scope-a', 'scope-c'])`
+`hasAnyScope(['scope-a', 'scope-c'])`
 _Check if the authenticated user has any of the scopes_
 
 ```php
