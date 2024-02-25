@@ -326,7 +326,12 @@ class AuthenticateTest extends TestCase
         ]);
 
         $this->withKeycloakToken()->json('GET', '/foo/secret');
-        $this->assertFalse(Auth::scopes(['scope-a', 'scope-b', 'scope-c']));
+
+        $expectedValues = ["scope-a", "scope-b", "scope-c"];
+        foreach ($expectedValues as $value) {
+            $this->assertContains($value, Auth::scopes());
+        }
+        $this->assertCount(count($expectedValues), Auth::scopes());
     }
 
     public function test_custom_user_retrieve_method()
