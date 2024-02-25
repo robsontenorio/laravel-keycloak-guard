@@ -288,14 +288,26 @@ Auth::hasAnyRole('myapp-backend', ['myapp-frontend-role1', 'myapp-frontend-role2
 ```
 
 #### Scope
-`hasScope('some-scope')`
-_Check if authenticated user has a scope_
-
+Example decoded payload:
 ```json
 {
     "scope": "scope-a scope-b scope-c",
 }
 ```
+
+`scopes()`
+_Get all user scopes_
+
+```php
+array:3 [
+  0 => "scope-a"
+  1 => "scope-b"
+  2 => "scope-c"
+]
+```
+
+`hasScope('some-scope')`
+_Check if authenticated user has a scope_
 
 ```php
 Auth::hasScope('scope-a') // true
