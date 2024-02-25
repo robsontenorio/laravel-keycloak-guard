@@ -334,6 +334,16 @@ class AuthenticateTest extends TestCase
         $this->assertCount(count($expectedValues), Auth::scopes());
     }
 
+    public function test_check_user_no_scopes()
+    {
+        $this->buildCustomToken([
+            'scope' => null,
+        ]);
+
+        $this->withKeycloakToken()->json('GET', '/foo/secret');
+        $this->assertCount(0, Auth::scopes());
+    }
+
     public function test_custom_user_retrieve_method()
     {
         config(['keycloak.user_provider_custom_retrieve_method' => 'custom_retrieve']);
