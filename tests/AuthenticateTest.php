@@ -319,6 +319,16 @@ class AuthenticateTest extends TestCase
         $this->assertFalse(Auth::hasAnyScope(['scope-f', 'scope-k']));
     }
 
+    public function test_check_user_scopes()
+    {
+        $this->buildCustomToken([
+            'scope' => 'scope-a scope-b scope-c',
+        ]);
+
+        $this->withKeycloakToken()->json('GET', '/foo/secret');
+        $this->assertFalse(Auth::scopes(['scope-a', 'scope-b', 'scope-c']));
+    }
+
     public function test_custom_user_retrieve_method()
     {
         config(['keycloak.user_provider_custom_retrieve_method' => 'custom_retrieve']);
