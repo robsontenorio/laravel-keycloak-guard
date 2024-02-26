@@ -239,4 +239,48 @@ class KeycloakGuard implements Guard
 
         return false;
     }
+
+    /**
+     * Get scope(s)
+     * @return array
+     */
+    public function scopes(): array
+    {
+        $scopes = $this->decodedToken->scope ?? null;
+
+        if ($scopes) {
+            return explode(' ', $scopes);
+        }
+
+        return [];
+    }
+
+    /**
+     * Check if authenticated user has a especific scope
+     * @param string $scope
+     * @return bool
+     */
+    public function hasScope(string $scope): bool
+    {
+        $scopes = $this->scopes();
+
+        if (in_array($scope, $scopes)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if authenticated user has a any scope
+     * @param array $scopes
+     * @return bool
+     */
+    public function hasAnyScope(array $scopes): bool
+    {
+        return count(array_intersect(
+            $this->scopes(),
+            is_string($scopes) ? [$scopes] : $scopes
+        )) > 0;
+    }
 }

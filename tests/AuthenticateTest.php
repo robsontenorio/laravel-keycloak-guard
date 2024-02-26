@@ -279,6 +279,71 @@ class AuthenticateTest extends TestCase
         $this->assertFalse(Auth::hasAnyRole('myapp-backend', ['myapp-frontend-role1', 'myapp-frontend-role2']));
     }
 
+    public function test_check_user_has_scope()
+    {
+        $this->buildCustomToken([
+            'scope' => 'scope-a scope-b scope-c',
+        ]);
+
+        $this->withKeycloakToken()->json('GET', '/foo/secret');
+        $this->assertTrue(Auth::hasScope('scope-a'));
+    }
+
+    public function test_check_user_no_has_scope()
+    {
+        $this->buildCustomToken([
+            'scope' => 'scope-a scope-b scope-c',
+        ]);
+
+        $this->withKeycloakToken()->json('GET', '/foo/secret');
+        $this->assertFalse(Auth::hasScope('scope-d'));
+    }
+
+    public function test_check_user_has_any_scope()
+    {
+        $this->buildCustomToken([
+            'scope' => 'scope-a scope-b scope-c',
+        ]);
+
+        $this->withKeycloakToken()->json('GET', '/foo/secret');
+        $this->assertTrue(Auth::hasAnyScope(['scope-a', 'scope-c']));
+    }
+
+    public function test_check_user_no_has_any_scope()
+    {
+        $this->buildCustomToken([
+            'scope' => 'scope-a scope-b scope-c',
+        ]);
+
+        $this->withKeycloakToken()->json('GET', '/foo/secret');
+        $this->assertFalse(Auth::hasAnyScope(['scope-f', 'scope-k']));
+    }
+
+    public function test_check_user_scopes()
+    {
+        $this->buildCustomToken([
+            'scope' => 'scope-a scope-b scope-c',
+        ]);
+
+        $this->withKeycloakToken()->json('GET', '/foo/secret');
+
+        $expectedValues = ["scope-a", "scope-b", "scope-c"];
+        foreach ($expectedValues as $value) {
+            $this->assertContains($value, Auth::scopes());
+        }
+        $this->assertCount(count($expectedValues), Auth::scopes());
+    }
+
+    public function test_check_user_no_scopes()
+    {
+        $this->buildCustomToken([
+            'scope' => null,
+        ]);
+
+        $this->withKeycloakToken()->json('GET', '/foo/secret');
+        $this->assertCount(0, Auth::scopes());
+    }
+
     public function test_custom_user_retrieve_method()
     {
         config(['keycloak.user_provider_custom_retrieve_method' => 'custom_retrieve']);
