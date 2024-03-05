@@ -241,6 +241,7 @@ Simple Keycloak Guard implements `Illuminate\Contracts\Auth\Guard`. So, all Lara
 
 ## Keycloak Guard methods
 
+#### Token
 `token()`
 _Returns full decoded JWT token from authenticated user._
 
@@ -248,8 +249,7 @@ _Returns full decoded JWT token from authenticated user._
 $token = Auth::token()  // or Auth::user()->token()
 ```
 
-<br>
-
+#### Role
 `hasRole('some-resource', 'some-role')`
 _Check if authenticated user has a role on resource_access_
 
@@ -302,6 +302,41 @@ public test_a_protected_route()
 }
 ```
 
+#### Scope
+Example decoded payload:
+```json
+{
+    "scope": "scope-a scope-b scope-c",
+}
+```
+
+`scopes()`
+_Get all user scopes_
+
+```php
+array:3 [
+  0 => "scope-a"
+  1 => "scope-b"
+  2 => "scope-c"
+]
+```
+
+`hasScope('some-scope')`
+_Check if authenticated user has a scope_
+
+```php
+Auth::hasScope('scope-a') // true
+Auth::hasScope('scope-d') // false
+```
+
+`hasAnyScope(['scope-a', 'scope-c'])`
+_Check if the authenticated user has any of the scopes_
+
+```php
+Auth::hasAnyScope(['scope-a', 'scope-c']) // true
+Auth::hasAnyScope(['scope-a', 'scope-d']) // true
+Auth::hasAnyScope(['scope-f', 'scope-k']) // false
+```
 
 # Contribute
 
