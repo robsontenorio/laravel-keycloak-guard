@@ -351,4 +351,13 @@ class AuthenticateTest extends TestCase
         $this->assertEquals($this->user->username, Auth::user()->username);
     }
 
+    public function test_acting_as_keycloak_user_trait_without_user()
+    {
+        $this->actingAsKeycloakUser()->json('GET', '/foo/secret');
+
+        $this->assertTrue(Auth::hasUser());
+
+        $this->assertFalse(Auth::guest());
+    }
+
 }

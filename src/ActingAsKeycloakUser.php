@@ -9,9 +9,13 @@ trait ActingAsKeycloakUser
 {
     public function actingAsKeycloakUser($user = null)
     {
+        if (!$user) {
+            Config::set('keycloak.load_user_from_database', false);
+        }
+
         $token = $this->generateKeycloakToken($user);
 
-        $this->withHeader('Authorization', 'Bearer ' . $token);
+        $this->withHeader('Authorization', 'Bearer '.$token);
 
         return $this;
     }
@@ -26,7 +30,7 @@ trait ActingAsKeycloakUser
 
         $publicKey = openssl_pkey_get_details($privateKey)['key'];
 
-        $publicKey = str_replace(["\n", '-----BEGIN PUBLIC KEY-----', '-----END PUBLIC KEY-----'], '', $publicKey);
+        $publicKey = Token::plainPublicKey($publicKey);
 
         Config::set('keycloak.realm_public_key', $publicKey);
 

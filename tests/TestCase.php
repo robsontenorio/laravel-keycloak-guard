@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 use KeycloakGuard\KeycloakGuardServiceProvider;
 use KeycloakGuard\Tests\Factories\UserFactory;
 use KeycloakGuard\Tests\Models\User;
+use KeycloakGuard\Token;
 use OpenSSLAsymmetricKey;
 use Orchestra\Testbench\TestCase as Orchestra;
 
@@ -68,7 +69,7 @@ class TestCase extends Orchestra
         ]);
 
         $app['config']->set('keycloak', [
-            'realm_public_key' => $this->plainPublicKey(),
+            'realm_public_key' => Token::plainPublicKey($this->publicKey),
             'user_provider_credential' => 'username',
             'token_principal_attribute' => 'preferred_username',
             'append_decoded_token' => false,
@@ -94,17 +95,7 @@ class TestCase extends Orchestra
         return [KeycloakGuardServiceProvider::class];
     }
 
-    // Just extract a string  from the public key, as required by config file
-    protected function plainPublicKey(): string
-    {
-        $string = str_replace('-----BEGIN PUBLIC KEY-----', '', $this->publicKey);
-        $string = trim(str_replace('-----END PUBLIC KEY-----', '', $string));
-        $string = str_replace('\n', '', $string);
-
-        return $string;
-    }
-
-    // Build a diferent token with custom payload
+    // Build a different token with custom payload
     protected function buildCustomToken(array $payload)
     {
         $payload = array_replace($this->payload, $payload);
@@ -113,10 +104,10 @@ class TestCase extends Orchestra
     }
 
     // Setup default token, for the default user
-     public function withKeycloakToken()
-     {
-         $this->withToken($this->token);
+    public function withKeycloakToken()
+    {
+        $this->withToken($this->token);
 
-         return $this;
-     }
+        return $this;
+    }
 }
