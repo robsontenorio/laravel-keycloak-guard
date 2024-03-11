@@ -32,4 +32,19 @@ class Token
     {
         return "-----BEGIN PUBLIC KEY-----\n".wordwrap($key, 64, "\n", true)."\n-----END PUBLIC KEY-----";
     }
+
+    /**
+     * Get the plain public key from a string
+     *
+     * @param  string  $key
+     * @return string
+     */
+    public static function plainPublicKey(string $key): string
+    {
+        $string = str_replace('-----BEGIN PUBLIC KEY-----', '', $key);
+        $string = trim(str_replace('-----END PUBLIC KEY-----', '', $string));
+        $string = str_replace('\n', '', $string);
+
+        return $string;
+    }
 }

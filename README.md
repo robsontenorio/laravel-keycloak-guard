@@ -287,6 +287,21 @@ Auth::hasAnyRole('myapp-frontend', ['myapp-frontend-role1', 'myapp-frontend-role
 Auth::hasAnyRole('myapp-backend', ['myapp-frontend-role1', 'myapp-frontend-role2']) // false
 ```
 
+# Acting as a Keycloak user in tests
+
+As an equivelant feature like `$this->actingAs($user)` in Laravel, with this package you can use `KeycloakGuard\ActingAsKeycloakUser` trait in your test class and then use `actingAsKeycloakUser()` method to act as a user and somehow skip the Keycloak auth:
+
+```php
+use KeycloakGuard\ActingAsKeycloakUser;
+
+public test_a_protected_route()
+{
+    $this->actingAsKeycloakUser()
+        ->getJson('/api/somewhere')
+        ->assertOk();
+}
+```
+
 #### Scope
 Example decoded payload:
 ```json

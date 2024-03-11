@@ -5,6 +5,7 @@ namespace KeycloakGuard\Tests;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Hashing\BcryptHasher;
 use Illuminate\Support\Facades\Auth;
+use KeycloakGuard\ActingAsKeycloakUser;
 use KeycloakGuard\Exceptions\ResourceAccessNotAllowedException;
 use KeycloakGuard\Exceptions\TokenException;
 use KeycloakGuard\Exceptions\UserNotFoundException;
@@ -14,6 +15,8 @@ use KeycloakGuard\Tests\Models\User;
 
 class AuthenticateTest extends TestCase
 {
+    use ActingAsKeycloakUser;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -405,4 +408,21 @@ class AuthenticateTest extends TestCase
 
         $this->json('POST', '/foo/secret', ['api_token' => $this->token]);
     }
+
+    public function test_with_keycloak_token_trait()
+    {
+        $this->actingAsKeycloakUser($this->user)->json('GET', '/foo/secret');
+
+        $this->assertEquals($this->user->username, Auth::user()->username);
+    }
+
+    public function test_acting_as_keycloak_user_trait_without_user()
+    {
+        $this->actingAsKeycloakUser()->json('GET', '/foo/secret');
+
+        $this->assertTrue(Auth::hasUser());
+
+        $this->assertFalse(Auth::guest());
+    }
+
 }
