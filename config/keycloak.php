@@ -3,6 +3,8 @@
 return [
     'realm_public_key' => env('KEYCLOAK_REALM_PUBLIC_KEY', null),
 
+    'token_encryption_algorithm' => env('KEYCLOAK_TOKEN_ENCRYPTION_ALGORITHM', 'RS256'),
+
     'load_user_from_database' => env('KEYCLOAK_LOAD_USER_FROM_DATABASE', true),
 
     'user_provider_custom_retrieve_method' => null,

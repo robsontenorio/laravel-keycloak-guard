@@ -94,7 +94,13 @@ _Required._
 
 The Keycloak Server realm public key (string).
 
-> How to get realm public key? Click on "Realm Settings" > "Keys" > "Algorithm RS256" Line > "Public Key" Button
+> How to get realm public key? Click on "Realm Settings" > "Keys" > "Algorithm RS256 (or defined under token_encryption_algorithm configuration)" Line > "Public Key" Button
+
+✔️ **token_encryption_algorithm**
+
+_Default is `RS256`._
+
+The JWT token encryption algorithm used by Keycloak (string).
 
 ✔️ **load_user_from_database**
 
