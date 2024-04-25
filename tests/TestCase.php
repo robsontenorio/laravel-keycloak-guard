@@ -38,14 +38,18 @@ class TestCase extends Orchestra
         ]);
     }
 
-    protected function prepareCredentials()
+    protected function prepareCredentials(string $encryptionAlgorithm = 'RS256', ?array $openSSLConfig = null)
     {
         // Prepare private/public keys and a default JWT token, with a simple payload
-        $this->privateKey = openssl_pkey_new([
-            'digest_alg' => 'sha256',
-            'private_key_bits' => 1024,
-            'private_key_type' => OPENSSL_KEYTYPE_RSA
-        ]);
+        if (!$openSSLConfig) {
+            $openSSLConfig = [
+                'digest_alg' => 'sha256',
+                'private_key_bits' => 1024,
+                'private_key_type' => OPENSSL_KEYTYPE_RSA
+            ];
+        }
+
+        $this->privateKey = openssl_pkey_new($openSSLConfig);
 
         $this->publicKey = openssl_pkey_get_details($this->privateKey)['key'];
 
@@ -54,7 +58,7 @@ class TestCase extends Orchestra
             'resource_access' => ['myapp-backend' => []]
         ];
 
-        $this->token = JWT::encode($this->payload, $this->privateKey, 'RS256');
+        $this->token = JWT::encode($this->payload, $this->privateKey, $encryptionAlgorithm);
     }
 
     // Default configs to make it running
@@ -96,11 +100,11 @@ class TestCase extends Orchestra
     }
 
     // Build a different token with custom payload
-    protected function buildCustomToken(array $payload)
+    protected function buildCustomToken(array $payload, string $encryptionAlgorithm = 'RS256')
     {
         $payload = array_replace($this->payload, $payload);
 
-        $this->token = JWT::encode($payload, $this->privateKey, 'RS256');
+        $this->token = JWT::encode($payload, $this->privateKey, $encryptionAlgorithm);
     }
 
     // Setup default token, for the default user
