@@ -12,6 +12,7 @@ use KeycloakGuard\Exceptions\UserNotFoundException;
 use KeycloakGuard\KeycloakGuard;
 use KeycloakGuard\Tests\Extensions\CustomUserProvider;
 use KeycloakGuard\Tests\Models\User;
+use KeycloakGuard\Token;
 
 class AuthenticateTest extends TestCase
 {
@@ -425,4 +426,19 @@ class AuthenticateTest extends TestCase
         $this->assertFalse(Auth::guest());
     }
 
+    public function test_it_decodes_token_with_the_configured_encryption_algorithm()
+    {
+        $this->prepareCredentials('ES256', [
+            'private_key_type' => OPENSSL_KEYTYPE_EC,
+            'curve_name' => 'prime256v1'
+        ]);
+
+        config([
+            'keycloak.token_encryption_algorithm' => 'ES256',
+            'keycloak.realm_public_key' => Token::plainPublicKey($this->publicKey)
+        ]);
+
+        $this->withKeycloakToken()->json('GET', '/foo/secret');
+        $this->assertEquals($this->user->username, Auth::user()->username);
+    }
 }
