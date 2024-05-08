@@ -16,7 +16,8 @@
     "prefer-stable": true,
     "require": {
         "firebase/php-jwt": "^6.3",
-        "php": "^8.0"
+        "php": "^8.0",
+        "ext-openssl": "*"
     },
     "autoload": {
         "psr-4": {

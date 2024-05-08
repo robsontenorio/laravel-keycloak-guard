@@ -7,20 +7,20 @@ use Illuminate\Support\Facades\Config;
 
 trait ActingAsKeycloakUser
 {
-    public function actingAsKeycloakUser($user = null)
+    public function actingAsKeycloakUser($user = null, $payload = [])
     {
         if (!$user) {
             Config::set('keycloak.load_user_from_database', false);
         }
 
-        $token = $this->generateKeycloakToken($user);
+        $token = $this->generateKeycloakToken($user, $payload);
 
         $this->withHeader('Authorization', 'Bearer '.$token);
 
         return $this;
     }
 
-    public function generateKeycloakToken($user = null)
+    public function generateKeycloakToken($user = null, $payload = [])
     {
         $privateKey = openssl_pkey_new([
             'digest_alg' => 'sha256',
@@ -34,13 +34,19 @@ trait ActingAsKeycloakUser
 
         Config::set('keycloak.realm_public_key', $publicKey);
 
-        $payload = [
-            'preferred_username' => $user->username ?? config('keycloak.preferred_username'),
-            'resource_access' => [config('keycloak.allowed_resources') => []]
-        ];
+        $iat = time();
+        $exp = time() + 300;
+        $resourceAccess = [config('keycloak.allowed_resources') => []];
 
-        $token = JWT::encode($payload, $privateKey, 'RS256');
+        $principal = Config::get('keycloak.token_principal_attribute');
+        $credential = Config::get('keycloak.user_provider_credential');
+        $payload = array_merge([
+            'iat' => $iat,
+            'exp' => $exp,
+            $principal => is_string($user) ? $user : $user->$credential ?? config('keycloak.preferred_username'),
+            'resource_access' => $resourceAccess
+        ], $payload);
 
-        return $token;
+        return JWT::encode($payload, $privateKey, 'RS256');
     }
 }
