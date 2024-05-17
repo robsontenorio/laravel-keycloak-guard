@@ -331,7 +331,7 @@ Auth::hasAnyScope(['scope-f', 'scope-k']) // false
 
 # Acting as a Keycloak user in tests
 
-As an equivelant feature like `$this->actingAs($user)` in Laravel, with this package you can use `KeycloakGuard\ActingAsKeycloakUser` trait in your test class and then use `actingAsKeycloakUser()` method to act as a user and somehow skip the Keycloak auth:
+As an equivalent feature like `$this->actingAs($user)` in Laravel, with this package you can use `KeycloakGuard\ActingAsKeycloakUser` trait in your test class and then use `actingAsKeycloakUser()` method to act as a user and somehow skip the Keycloak auth:
 
 ```php
 use KeycloakGuard\ActingAsKeycloakUser;
@@ -345,6 +345,22 @@ public test_a_protected_route()
 ```
 
 If you are not using `keycloak.load_user_from_database` option, set `keycloak.preferred_username` with a valid `preferred_username` for tests.
+
+You can also specify exact expectations for the token payload by passing the payload array in the second argument:
+
+```php
+use KeycloakGuard\ActingAsKeycloakUser;
+
+public test_a_protected_route()
+{
+    $this->actingAsKeycloakUser($user, [
+        'aud' => 'account',
+        'exp' => 1715926026,
+        'iss' => 'https://localhost:8443/realms/master'
+    ])->getJson('/api/somewhere')
+      ->assertOk();
+}
+```
 
 # Contribute
 
