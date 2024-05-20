@@ -361,6 +361,36 @@ public test_a_protected_route()
       ->assertOk();
 }
 ```
+`$user` argument receives a string identifier or
+an Eloquent model, identifier of which is expected to be the property referred in **user_provider_credential** config.
+Whatever you pass in the payload will override default claims,
+which includes `aud`, `iat`, `exp`, `iss`, `azp`, `resource_access` and either `sub` or `preferred_username`,
+depending on **token_principal_attribute** config.
+
+Alternatively, payload can be provided in a class property, so it can be reused across multiple tests:
+
+```php
+use KeycloakGuard\ActingAsKeycloakUser;
+
+protected $tokenPayload = [
+    'aud' => 'account',
+    'exp' => 1715926026,
+    'iss' => 'https://localhost:8443/realms/master'
+];
+
+public test_a_protected_route()
+{
+    $payload = [
+        'exp' => 1715914352
+    ];
+    $this->actingAsKeycloakUser($user, $payload)
+        ->getJson('/api/somewhere')
+        ->assertOk();
+}
+```
+
+Priority is given to the claims in passed as an argument, so they will override ones in the class property.
+`$user` argument has the highest priority over the claim referred in **token_principal_attribute** config.
 
 # Contribute
 
