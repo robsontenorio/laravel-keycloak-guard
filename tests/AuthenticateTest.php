@@ -462,7 +462,7 @@ class AuthenticateTest extends TestCase
             $arg = $payload;
         }
 
-        $this->actingAsKeycloakUser($this->user, $arg)->json('GET', '/foo/secret');
+        $this->actingAsKeycloakUser(payload: $arg)->json('GET', '/foo/secret');
 
         $this->assertEquals('test_username', Auth::user()->username);
         $token = Token::decode(request()->bearerToken(), config('keycloak.realm_public_key'), config('keycloak.leeway'), config('keycloak.token_encryption_algorithm'));
@@ -470,6 +470,7 @@ class AuthenticateTest extends TestCase
         $this->assertEquals(9999999999999, $token->exp);
         $this->assertEquals('test_sub', $token->sub);
         $this->assertEquals('test_aud', $token->aud);
+        $this->assertTrue(config('keycloak.load_user_from_database'));
     }
 
     public function test_acting_as_keycloak_user_trait_without_user()

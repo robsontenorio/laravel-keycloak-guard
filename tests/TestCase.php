@@ -21,6 +21,8 @@ class TestCase extends Orchestra
     public array $defaultPayload;
     public string $token;
 
+    protected User $user;
+
     protected function setUp(): void
     {
         // Prepare credentials

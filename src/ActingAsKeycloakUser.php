@@ -11,7 +11,8 @@ trait ActingAsKeycloakUser
 
     public function actingAsKeycloakUser($user = null, $payload = []): self
     {
-        if (!$user) {
+        $principal = Config::get('keycloak.token_principal_attribute');
+        if (!$user && !isset($payload[$principal]) && !isset($this->payload[$principal])) {
             Config::set('keycloak.load_user_from_database', false);
         }
 
