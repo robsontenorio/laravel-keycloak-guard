@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Config;
 
 trait ActingAsKeycloakUser
 {
+    protected array $payload = [];
+
     public function actingAsKeycloakUser($user = null, $payload = []): self
     {
         if (!$user) {
@@ -37,18 +39,22 @@ trait ActingAsKeycloakUser
         $iat = time();
         $exp = time() + 300;
         $resourceAccess = [config('keycloak.allowed_resources') => []];
-
         $principal = Config::get('keycloak.token_principal_attribute');
         $credential = Config::get('keycloak.user_provider_credential');
+
         $payload = array_merge([
             'iss' => 'https://keycloak.server/realms/laravel',
             'azp' => 'client-id',
             'aud' => 'phpunit',
             'iat' => $iat,
             'exp' => $exp,
-            $principal => is_string($user) ? $user : $user->$credential ?? config('keycloak.preferred_username'),
-            'resource_access' => $resourceAccess
-        ], $payload);
+            $principal => config('keycloak.preferred_username'),
+            'resource_access' => $resourceAccess,
+        ], $this->payload, $payload);
+
+        if ($user) {
+            $payload[$principal] = is_string($user) ? $user : $user->$credential;
+        }
 
         return JWT::encode($payload, $privateKey, 'RS256');
     }

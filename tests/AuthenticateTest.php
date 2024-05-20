@@ -412,7 +412,7 @@ class AuthenticateTest extends TestCase
         $this->json('POST', '/foo/secret', ['api_token' => $this->token]);
     }
 
-    public function test_with_keycloak_token_trait()
+    public function test_acting_as_keycloak_user_trait()
     {
         $this->actingAsKeycloakUser($this->user)->json('GET', '/foo/secret');
 
@@ -425,7 +425,7 @@ class AuthenticateTest extends TestCase
         $this->assertNotNull($token->aud);
     }
 
-    public function test_with_keycloak_token_trait_with_username()
+    public function test_acting_as_keycloak_user_trait_with_username()
     {
         $this->actingAsKeycloakUser($this->user->username)->json('GET', '/foo/secret');
 
@@ -435,18 +435,34 @@ class AuthenticateTest extends TestCase
         $this->assertNotNull($token->exp);
     }
 
-    public function test_with_keycloak_token_trait_with_custom_payload()
+    /**
+     * @dataProvider scopeProvider
+     *
+     * @return void
+     */
+    public function test_acting_as_keycloak_user_trait_with_custom_payload(string $scope)
     {
         UserFactory::new()->create([
             'username' => 'test_username',
         ]);
-        $this->actingAsKeycloakUser($this->user, [
+        $payload = [
             'sub' => 'test_sub',
             'aud' => 'test_aud',
             'preferred_username' => 'test_username',
             'iat' => 12345,
             'exp' => 9999999999999,
-        ])->json('GET', '/foo/secret');
+        ];
+
+        $arg = [];
+
+        if ($scope === 'class') {
+            $this->payload = $payload;
+        } else {
+            $this->payload['sub'] = 'should_be_overwritten';
+            $arg = $payload;
+        }
+
+        $this->actingAsKeycloakUser($this->user, $arg)->json('GET', '/foo/secret');
 
         $this->assertEquals('test_username', Auth::user()->username);
         $token = Token::decode(request()->bearerToken(), config('keycloak.realm_public_key'), config('keycloak.leeway'), config('keycloak.token_encryption_algorithm'));
@@ -479,5 +495,13 @@ class AuthenticateTest extends TestCase
 
         $this->withKeycloakToken()->json('GET', '/foo/secret');
         $this->assertEquals($this->user->username, Auth::user()->username);
+    }
+
+    public function scopeProvider(): array
+    {
+        return [
+            ['local'],
+            ['class'],
+        ];
     }
 }
