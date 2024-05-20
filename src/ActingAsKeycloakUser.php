@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Config;
 
 trait ActingAsKeycloakUser
 {
-    public function actingAsKeycloakUser($user = null, $payload = [])
+    public function actingAsKeycloakUser($user = null, $payload = []): self
     {
         if (!$user) {
             Config::set('keycloak.load_user_from_database', false);
@@ -20,7 +20,7 @@ trait ActingAsKeycloakUser
         return $this;
     }
 
-    public function generateKeycloakToken($user = null, $payload = [])
+    public function generateKeycloakToken($user = null, $payload = []): string
     {
         $privateKey = openssl_pkey_new([
             'digest_alg' => 'sha256',
@@ -41,6 +41,7 @@ trait ActingAsKeycloakUser
         $principal = Config::get('keycloak.token_principal_attribute');
         $credential = Config::get('keycloak.user_provider_credential');
         $payload = array_merge([
+            'iss' => 'https://keycloak.server/realms/laravel',
             'iat' => $iat,
             'exp' => $exp,
             $principal => is_string($user) ? $user : $user->$credential ?? config('keycloak.preferred_username'),
