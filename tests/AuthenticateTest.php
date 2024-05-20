@@ -420,6 +420,9 @@ class AuthenticateTest extends TestCase
         $token = Token::decode(request()->bearerToken(), config('keycloak.realm_public_key'), config('keycloak.leeway'), config('keycloak.token_encryption_algorithm'));
         $this->assertNotNull($token->iat);
         $this->assertNotNull($token->exp);
+        $this->assertNotNull($token->iss);
+        $this->assertNotNull($token->azp);
+        $this->assertNotNull($token->aud);
     }
 
     public function test_with_keycloak_token_trait_with_username()

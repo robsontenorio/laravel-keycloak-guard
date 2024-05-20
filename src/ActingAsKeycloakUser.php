@@ -42,6 +42,8 @@ trait ActingAsKeycloakUser
         $credential = Config::get('keycloak.user_provider_credential');
         $payload = array_merge([
             'iss' => 'https://keycloak.server/realms/laravel',
+            'azp' => 'client-id',
+            'aud' => 'phpunit',
             'iat' => $iat,
             'exp' => $exp,
             $principal => is_string($user) ? $user : $user->$credential ?? config('keycloak.preferred_username'),
