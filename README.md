@@ -329,7 +329,7 @@ Auth::hasAnyScope(['scope-a', 'scope-d']) // true
 Auth::hasAnyScope(['scope-f', 'scope-k']) // false
 ```
 
-# Acting as a Keycloak user in tests
+## Acting as a Keycloak user in tests
 
 As an equivalent feature like `$this->actingAs($user)` in Laravel, with this package you can use `KeycloakGuard\ActingAsKeycloakUser` trait in your test class and then use `actingAsKeycloakUser()` method to act as a user and somehow skip the Keycloak auth:
 
