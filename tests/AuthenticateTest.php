@@ -456,9 +456,9 @@ class AuthenticateTest extends TestCase
         $arg = [];
 
         if ($scope === 'class') {
-            $this->payload = $payload;
+            $this->jwtPayload = $payload;
         } else {
-            $this->payload['sub'] = 'should_be_overwritten';
+            $this->jwtPayload['sub'] = 'should_be_overwritten';
             $arg = $payload;
         }
 

@@ -7,12 +7,12 @@ use Illuminate\Support\Facades\Config;
 
 trait ActingAsKeycloakUser
 {
-    protected array $payload = [];
+    protected array $jwtPayload = [];
 
     public function actingAsKeycloakUser($user = null, $payload = []): self
     {
         $principal = Config::get('keycloak.token_principal_attribute');
-        if (!$user && !isset($payload[$principal]) && !isset($this->payload[$principal])) {
+        if (!$user && !isset($payload[$principal]) && !isset($this->jwtPayload[$principal])) {
             Config::set('keycloak.load_user_from_database', false);
         }
 
@@ -51,7 +51,7 @@ trait ActingAsKeycloakUser
             'exp' => $exp,
             $principal => config('keycloak.preferred_username'),
             'resource_access' => $resourceAccess,
-        ], $this->payload, $payload);
+        ], $this->jwtPayload, $payload);
 
         if ($user) {
             $payload[$principal] = is_string($user) ? $user : $user->$credential;
