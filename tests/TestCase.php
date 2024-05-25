@@ -18,8 +18,10 @@ class TestCase extends Orchestra
 {
     public OpenSSLAsymmetricKey $privateKey;
     public string $publicKey;
-    public array $payload;
+    public array $defaultPayload;
     public string $token;
+
+    protected User $user;
 
     protected function setUp(): void
     {
@@ -53,12 +55,12 @@ class TestCase extends Orchestra
 
         $this->publicKey = openssl_pkey_get_details($this->privateKey)['key'];
 
-        $this->payload = [
+        $this->defaultPayload = [
             'preferred_username' => 'johndoe',
             'resource_access' => ['myapp-backend' => []]
         ];
 
-        $this->token = JWT::encode($this->payload, $this->privateKey, $encryptionAlgorithm);
+        $this->token = JWT::encode($this->defaultPayload, $this->privateKey, $encryptionAlgorithm);
     }
 
     // Default configs to make it running
@@ -102,7 +104,7 @@ class TestCase extends Orchestra
     // Build a different token with custom payload
     protected function buildCustomToken(array $payload, string $encryptionAlgorithm = 'RS256')
     {
-        $payload = array_replace($this->payload, $payload);
+        $payload = array_replace($this->defaultPayload, $payload);
 
         $this->token = JWT::encode($payload, $this->privateKey, $encryptionAlgorithm);
     }
