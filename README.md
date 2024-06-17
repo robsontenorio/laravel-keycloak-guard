@@ -56,25 +56,65 @@ This package helps you authenticate users on a Laravel API based on JWT tokens g
 
 # Install
 
-### Laravel / Lumen
-
 Require the package
 
 ```
 composer require robsontenorio/laravel-keycloak-guard
 ```
 
-### Lumen only
-
-Register the provider in your boostrap app file `bootstrap/app.php`
-
-Add the following line in the "Register Service Providers" section at the bottom of the file.
+**If you are using Lumen**, register the provider in your boostrap app file `bootstrap/app.php`.  
+For facades, uncomment `$app->withFacades();` in your boostrap app file `bootstrap/app.php`
 
 ```php
 $app->register(\KeycloakGuard\KeycloakGuardServiceProvider::class);
 ```
 
-For facades, uncomment `$app->withFacades();` in your boostrap app file `bootstrap/app.php`
+### Example configuration (.env)
+
+```.env
+KEYCLOAK_REALM_PUBLIC_KEY=MIIBIj...         # Get it on Keycloak admin web console.
+KEYCLOAK_LOAD_USER_FROM_DATABASE=false      # You can opt to not load user from database, and use that one provided from JWT token.
+KEYCLOAK_APPEND_DECODED_TOKEN=true          # Append the token info to user object.
+KEYCLOAK_ALLOWED_RESOURCES=my-api           # The JWT token must contain this resource `my-api`.
+KEYCLOAK_LEEWAY=60                          # Optional, but solve some weird issues with timestamps from JWT token.
+```
+
+
+### Auth Guard
+
+Changes on `config/auth.php`
+
+```php
+'defaults' => [
+    'guard' => 'api',                 # <-- This
+    'passwords' => 'users',
+],    
+'guards' => [
+    'api' => [
+        'driver' => 'keycloak',       # <-- This
+        'provider' => 'users',
+    ],
+],
+```
+
+### Routes
+
+Just protect some endpoints on `routes/api.php` and **you are done!**
+
+```php
+// public endpoints
+Route::get('/hello', function () {
+    return ':)';
+});
+
+// protected endpoints
+Route::group(['middleware' => 'auth:api'], function () {
+    Route::get('/protected-endpoint', 'SecretController@index');
+
+    // more endpoints ...
+});
+```
+
 
 # Configuration
 
@@ -173,64 +213,6 @@ GET  $this->get("/foo/secret?api_token=xxxxx")
 POST $this->post("/foo/secret", ["api_token" => "xxxxx"])
 ```
 
-## Laravel Auth
-
-Changes on `config/auth.php`
-
-```php
-...
-'defaults' => [
-        'guard' => 'api', # <-- For sure, i`m building an API
-        'passwords' => 'users',
-    ],
-
-    ....
-
-    'guards' => [
-        # <!-----
-        #     Make sure your "api" guard looks like this.
-        #     Newer Laravel versions just removed this config block.
-        #  ---->
-        'api' => [
-            'driver' => 'keycloak',
-            'provider' => 'users',
-        ],
-    ],
-```
-
-## Laravel Routes
-
-Just protect some endpoints on `routes/api.php` and you are done!
-
-```php
-// public endpoints
-Route::get('/hello', function () {
-    return ':)';
-});
-
-// protected endpoints
-Route::group(['middleware' => 'auth:api'], function () {
-    Route::get('/protected-endpoint', 'SecretController@index');
-    // more endpoints ...
-});
-```
-
-## Lumen Routes
-
-Just protect some endpoints on `routes/web.php` and you are done!
-
-```php
-// public endpoints
-$router->get('/hello', function () {
-    return ':)';
-});
-
-// protected endpoints
-$router->group(['middleware' => 'auth'], function () {
-    $router->get('/protected-endpoint', 'SecretController@index');
-    // more endpoints ...
-});
-```
 
 # API
 
