@@ -131,12 +131,11 @@ class KeycloakGuard implements Guard
   private function validateResources()
   {
     $token_role_property = $this->config['token_role_property'];
-    try {
-        $bpRoles = (array)$this->decodedToken->{$token_role_property};
-    } catch (Exception $e) {
-        $bpRoles = [];
-    }
-    
+    if (isseet($this->decodedToken[$token_role_property])) {
+         $bpRoles = (array)$this->decodedToken->{$token_role_property};
+    } else {
+         $bpRoles = [];
+    }   
 
     // Extract roles from first BP
     $this->roles = array_shift($bpRoles);
