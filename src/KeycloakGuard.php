@@ -16,6 +16,7 @@ class KeycloakGuard implements Guard
     protected $user;
     protected $provider;
     protected $decodedToken;
+    protected $roles;
     protected Request $request;
 
     public function __construct(UserProvider $provider, Request $request)
@@ -120,6 +121,33 @@ class KeycloakGuard implements Guard
         return $this->user;
     }
 
+
+
+  /**
+   * Validate if authenticated user has a valid resource
+   *
+   * @return void
+   */
+  private function validateResources()
+  {
+    $token_role_property = $this->config['token_role_property'];
+    if (property_exists($this->decodedToken, $token_role_property)) {
+        $bpRoles = (array)$this->decodedToken->{$token_role_property};
+    } else {
+        $bpRoles = [];
+    }
+
+    // Extract roles from first BP
+    $this->roles = array_shift($bpRoles);
+
+    if (!is_array($this->roles)) {
+      throw new ResourceAccessNotAllowedException("The decoded JWT token has not a valid roles");
+    }
+
+}
+    
+    
+    
     /**
      * Get the ID for the currently authenticated user.
      *
@@ -174,24 +202,6 @@ class KeycloakGuard implements Guard
         return true;
     }
 
-    /**
-     * Validate if authenticated user has a valid resource
-     *
-     * @return void
-     */
-    protected function validateResources()
-    {
-        if ($this->config['ignore_resources_validation']) {
-            return;
-        }
-
-        $token_resource_access = array_keys((array)($this->decodedToken->resource_access ?? []));
-        $allowed_resources = explode(',', $this->config['allowed_resources']);
-
-        if (count(array_intersect($token_resource_access, $allowed_resources)) == 0) {
-            throw new ResourceAccessNotAllowedException("The decoded JWT token has not a valid `resource_access` allowed by API. Allowed resources by API: ".$this->config['allowed_resources']);
-        }
-    }
 
     /**
      * Check if authenticated user has a especific role into resource
@@ -201,18 +211,25 @@ class KeycloakGuard implements Guard
      */
     public function hasRole($resource, $role)
     {
-        $token_resource_access = (array)$this->decodedToken->resource_access;
 
-        if (array_key_exists($resource, $token_resource_access)) {
-            $token_resource_values = (array)$token_resource_access[$resource];
+         $token_roles = (array)$this->decodedToken->userroles;
 
-            if (array_key_exists('roles', $token_resource_values) &&
-              in_array($role, $token_resource_values['roles'])) {
-                return true;
+
+            foreach($token_roles as $token_role) {
+                
+                if (str_contains($role, $token_role)) {
+                    return true;
+                }
             }
-        }
+        
 
         return false;
+        /*
+      if (in_array($role, $this->roles)) {
+        return true;
+      }
+      return false;
+      */
     }
     
     /**
