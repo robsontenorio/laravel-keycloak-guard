@@ -212,7 +212,7 @@ class KeycloakGuard implements Guard
     public function hasRole($resource, $role)
     {
 
-         $token_roles = (array)$this->decodedToken->userData->userroles;
+         $token_roles = (array)$this->decodedToken->userroles;
 
 
             foreach($token_roles as $token_role) {
