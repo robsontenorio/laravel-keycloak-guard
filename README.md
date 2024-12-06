@@ -153,11 +153,12 @@ It fetchs user from database and fill values into authenticated user object. If 
 ✔️ **user_provider_custom_retrieve_method**
 
 _Default is `null`._
+_Expects the string name of your custom defined method in your custom user provider._
 
 If you have an `users` table and want it to be updated (creating or updating users) based on the token, you can inform a custom method on a custom UserProvider, that will be called instead `retrieveByCredentials` and will receive the complete decoded token as parameter, not just the credentials (as default).
 This will allow you to customize the way you want to interact with your database, before matching and delivering the authenticated user object, having all the information contained in the (valid) access token available. To read more about custom UserProviders, please check [Laravel's documentation about](https://laravel.com/docs/8.x/authentication#adding-custom-user-providers).
 
-If using this feature, obviously, values defined for `user_provider_credential` and `token_principal_attribute` will be ignored.
+If using this feature, the values defined for `user_provider_credential` and `token_principal_attribute` will be ignored. Requires 'load_user_from_database' to be true. Your custom method needs the parameters $token (an object) and $credentials (an associative array).
 
 ✔️ **user_provider_credential**
 
