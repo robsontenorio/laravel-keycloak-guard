@@ -2,7 +2,6 @@
 
 namespace KeycloakGuard\Tests;
 
-use Firebase\JWT\JWT;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Hashing\BcryptHasher;
 use Illuminate\Support\Facades\Auth;
@@ -394,7 +393,7 @@ class AuthenticateTest extends TestCase
     {
         config(['keycloak.input_key' => "api_token"]);
 
-        $this->json('GET', '/foo/secret?api_token=' . $this->token);
+        $this->json('GET', '/foo/secret?api_token='.$this->token);
 
         $this->assertEquals(Auth::id(), $this->user->id);
 
@@ -410,6 +409,15 @@ class AuthenticateTest extends TestCase
         $this->assertEquals(Auth::id(), $this->user->id);
 
         $this->json('POST', '/foo/secret', ['api_token' => $this->token]);
+    }
+
+    public function test_authenticates_with_custom_input_key_cookie()
+    {
+        config(['keycloak.input_key' => "api_token"]);
+
+        $this->withKeycloakCookie('api_token')->json('GET', '/foo/secret');
+
+        $this->assertEquals(Auth::id(), $this->user->id);
     }
 
     public function test_acting_as_keycloak_user_trait()

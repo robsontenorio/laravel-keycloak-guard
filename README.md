@@ -203,7 +203,7 @@ You can add a leeway to account for when there is a clock skew times between the
 
 _Default is `null`._
 
-By default this package **always** will look at first for a `Bearer` token. Additionally, if this option is enabled, then it will try to get a token from this custom request param.
+By default this package **always** will look at first for a `Bearer` token. Additionally, if this option is enabled, then it will try to get a token from this custom request param *or* cookie.
 
 ```php
 // keycloak.php
@@ -214,6 +214,17 @@ GET  $this->get("/foo/secret?api_token=xxxxx")
 POST $this->post("/foo/secret", ["api_token" => "xxxxx"])
 ```
 
+If there is neither a Bearer token nor a request parameter `api_token`, it will also accept a cookie with the name. This can be useful in case you protect an API that is used by client-side JavaScript. In that case, you can set an HttpOnly cookie holding the token:
+
+```php
+// Set the token as cookie
+return redirect($url)->withCookie(cookie($this->config['input_key'], $token, 3600, '/', null, true, true, true));
+```
+
+The browser then automatically sends the cookie along when performing requests to the API.*
+
+
+*\*Carefully consider Cross-Origin Resource Sharing (CORS) and the Same-Origin-Policy (SOP) when running into issues such as cookies not being sent along automatically.*
 
 # API
 
