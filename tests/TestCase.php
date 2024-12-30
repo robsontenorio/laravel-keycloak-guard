@@ -116,4 +116,12 @@ class TestCase extends Orchestra
 
         return $this;
     }
+
+    // Setup default token, for the default user
+    public function withKeycloakCookie($name)
+    {
+        $this->withCookie($name, $this->token);
+
+        return $this;
+    }
 }

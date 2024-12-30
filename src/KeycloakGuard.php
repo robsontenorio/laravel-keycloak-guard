@@ -58,7 +58,7 @@ class KeycloakGuard implements Guard
     {
         $inputKey = $this->config['input_key'] ?? "";
 
-        return $this->request->bearerToken() ?? $this->request->input($inputKey);
+        return $this->request->bearerToken() ?? $this->request->input($inputKey) ?? $this->request->cookies->get($inputKey);
     }
 
     /**
@@ -91,12 +91,12 @@ class KeycloakGuard implements Guard
         return !$this->check();
     }
 
-     /**
-     * Set the current user.
-     *
-     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
-     * @return void
-     */
+    /**
+    * Set the current user.
+    *
+    * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
+    * @return void
+    */
     public function setUser(Authenticatable $user)
     {
         $this->user = $user;
@@ -132,11 +132,11 @@ class KeycloakGuard implements Guard
         }
     }
 
-     /**
-     * Returns full decoded JWT token from athenticated user
-     *
-     * @return mixed|null
-     */
+    /**
+    * Returns full decoded JWT token from athenticated user
+    *
+    * @return mixed|null
+    */
     public function token()
     {
         return json_encode($this->decodedToken);
@@ -189,7 +189,7 @@ class KeycloakGuard implements Guard
         $allowed_resources = explode(',', $this->config['allowed_resources']);
 
         if (count(array_intersect($token_resource_access, $allowed_resources)) == 0) {
-            throw new ResourceAccessNotAllowedException("The decoded JWT token does not have a valid `resource_access` permission allowed by the API. Allowed resources: " . $this->config['allowed_resources'] . ". Token resources: " . json_encode($token_resource_access));
+            throw new ResourceAccessNotAllowedException("The decoded JWT token does not have a valid `resource_access` permission allowed by the API. Allowed resources: ".$this->config['allowed_resources'].". Token resources: ".json_encode($token_resource_access));
         }
     }
 
@@ -214,7 +214,7 @@ class KeycloakGuard implements Guard
 
         return false;
     }
-    
+
     /**
      * Check if authenticated user has a any role into resource
      * @param string $resource
