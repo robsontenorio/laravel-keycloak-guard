@@ -4,24 +4,30 @@ on: [push, pull_request]
 
 jobs:
   build-and-test:
-    name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} 
+    name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php: [8.0, 8.1]
-        laravel: [8.*, 9.*]       
-        stability: [prefer-lowest, prefer-stable]               
-        include: 
+        php: [8.0, 8.1, 8.2, 8.3, 8.4]
+        laravel: [8.*, 9.*, 10.*, 11.*]
+        stability: [prefer-lowest, prefer-stable]
+        include:
           - laravel: 8.*
             testbench: 6.*
             collision: 5.*
           - laravel: 9.*
             testbench: 7.*
             collision: 6.*
+          - laravel: 10.*
+            testbench: 8.*
+            collision: 7.*
+          - laravel: 11.*
+            testbench: 9.*
+            collision: 8.*
         exclude:
           - laravel: 8.*
             stability: prefer-lowest
-                      
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
