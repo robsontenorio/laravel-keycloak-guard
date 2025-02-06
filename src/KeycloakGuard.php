@@ -43,8 +43,12 @@ class KeycloakGuard implements Guard
         }
 
         if ($this->decodedToken) {
+            $tokenAttribute = null;
+            if (property_exists($this->decodedToken, $this->config['token_principal_attribute'])) {
+                $tokenAttribute = $this->decodedToken->{$this->config['token_principal_attribute']};
+            }
             $this->validate([
-                $this->config['user_provider_credential'] => $this->decodedToken->{$this->config['token_principal_attribute']}
+                $this->config['user_provider_credential'] => $tokenAttribute
             ]);
         }
     }
