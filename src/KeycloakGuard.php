@@ -142,7 +142,7 @@ class KeycloakGuard implements Guard
     }
 
     // Extract roles from first BP
-    $this->roles = array_shift($bpRoles);
+    $this->roles = $bpRoles;
 
     if (!is_array($this->roles)) {
       throw new ResourceAccessNotAllowedException("The decoded JWT token has not a valid roles");
