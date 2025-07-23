@@ -136,7 +136,6 @@ class KeycloakGuard implements Guard
     if (property_exists($this->decodedToken, $token_role_property)) {
        
         $bpRoles = (array)$this->decodedToken->{$token_role_property};
-         Log::debug($bpRoles);
     } else {
         $bpRoles = [];
     }
