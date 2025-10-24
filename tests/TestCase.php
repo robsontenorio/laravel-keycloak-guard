@@ -75,6 +75,14 @@ class TestCase extends Orchestra
             'allowed_resources' => 'myapp-backend',
             'ignore_resources_validation' => false,
         ]);
+
+        // Configure database for testing
+        $app['config']->set('database.default', 'testing');
+        $app['config']->set('database.connections.testing', [
+            'driver' => 'sqlite',
+            'database' => ':memory:',
+            'prefix' => '',
+        ]);
     }
 
     protected function setUpDatabase(Application $app)

@@ -43,11 +43,11 @@
         }
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.5",
-        "orchestra/testbench": "^7.7",
+        "phpunit/phpunit": "^10.0",
+        "orchestra/testbench": "^8.0",
         "friendsofphp/php-cs-fixer": "^3.10",
-        "nunomaduro/collision": "^6.3",
-        "pestphp/pest": "^1.22"
+        "nunomaduro/collision": "^7.0",
+        "pestphp/pest": "^2.0"
     },
     "config": {
         "allow-plugins": {
