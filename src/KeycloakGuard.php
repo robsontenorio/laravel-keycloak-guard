@@ -214,17 +214,30 @@ class KeycloakGuard implements Guard
      */
     public function hasRole($resource, $role)
     {
-
-         $token_roles = (array)$this->decodedToken->userroles;
-
-
-            foreach($token_roles as $token_role) {
-                
+        // Backward compatibility: check flat list under `userroles`
+        if (property_exists($this->decodedToken, 'userroles')) {
+            $token_roles = (array) $this->decodedToken->userroles;
+            foreach ($token_roles as $token_role) {
                 if (str_contains($role, $token_role)) {
                     return true;
                 }
             }
-        
+        }
+
+        // New format: roles can be sent under `bproles` as nested arrays
+        // Example: bproles: {1000148142: ["legitimaziun_@petroler_#read"], 1000566550: ["..."]}
+        if (property_exists($this->decodedToken, 'bproles')) {
+            $bpRoles = (array) $this->decodedToken->bproles;
+            foreach ($bpRoles as $bpId => $rolesArray) {
+                // Normalize to array of strings
+                $list = is_array($rolesArray) ? $rolesArray : (array) $rolesArray;
+                foreach ($list as $assignedRole) {
+                    if ($assignedRole === $role) {
+                        return true;
+                    }
+                }
+            }
+        }
 
         return false;
         /*
