@@ -385,6 +385,6 @@ composer test
 composer test:coverage
 ```
 
-# Contact
+# Acknowledgements
 
-Twitter [@robsontenorio](https://twitter.com/robsontenorio)
+Originally developed by [@robsontenorio](https://twitter.com/robsontenorio)
