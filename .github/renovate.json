@@ -1,0 +1,20 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": [
+        "config:recommended",
+        ":pinOnlyDevDependencies",
+        ":timezone(Europe/Berlin)",
+        "schedule:earlyMondays",
+        ":semanticCommits",
+        "docker:pinDigests",
+        "helpers:pinGitHubActionDigests",
+        ":approveMajorUpdates",
+        ":separateMultipleMajorReleases"
+    ],
+    "packageRules": [
+        {
+            "matchManagers": ["github-actions"],
+            "semanticCommitType": "build"
+        }
+    ]
+}
