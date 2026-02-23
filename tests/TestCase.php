@@ -46,7 +46,7 @@ class TestCase extends Orchestra
         if (!$openSSLConfig) {
             $openSSLConfig = [
                 'digest_alg' => 'sha256',
-                'private_key_bits' => 1024,
+                'private_key_bits' => 2048,
                 'private_key_type' => OPENSSL_KEYTYPE_RSA
             ];
         }

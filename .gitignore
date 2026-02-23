@@ -3,3 +3,5 @@ vendor
 .php-cs-fixer.cache
 .coverage/
 .phpunit.result.cache
+/.idea
+/.vscode
