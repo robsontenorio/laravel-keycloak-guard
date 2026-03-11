@@ -27,7 +27,7 @@ trait ActingAsKeycloakUser
     {
         $privateKey = openssl_pkey_new([
             'digest_alg' => 'sha256',
-            'private_key_bits' => 1024,
+            'private_key_bits' => с,
             'private_key_type' => OPENSSL_KEYTYPE_RSA
         ]);
 
