@@ -283,4 +283,22 @@ class KeycloakGuard implements Guard
             is_string($scopes) ? [$scopes] : $scopes
         )) > 0;
     }
+
+    /**
+     * Get username in token
+     */
+    public function username(): string|null
+    {
+        $usernameField = $this->config['token_principal_attribute'];
+
+        if (!$this->decodedToken || !$usernameField) {
+            return null;
+        }
+
+        if (property_exists($this->decodedToken, $usernameField)) {
+            return $this->decodedToken->{$usernameField};
+        }
+
+        return null;
+    }
 }
