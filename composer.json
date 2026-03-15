@@ -15,8 +15,10 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "firebase/php-jwt": "^6.3",
+        "firebase/php-jwt": "^6.3|^7.0",
         "php": "^8.0",
+        "illuminate/auth": "^10.0|^11.0|^12.0",
+        "illuminate/support": "^10.0|^11.0|^12.0",
         "ext-openssl": "*"
     },
     "autoload": {
@@ -31,7 +33,7 @@
     },
     "scripts": {
         "test": "pest",
-        "test:coverage": "php -d pcov.enabled=1 ./vendor/bin/pest --coverage --coverage-clover=.coverage/clover.xml --coverage-html=.coverage",
+        "test:coverage": "php -d pcov.enabled=1 ./vendor/bin/pest --coverage --min=80 --coverage-clover=.coverage/clover.xml --coverage-html=.coverage",
         "post-autoload-dump": [
             "@php ./vendor/bin/testbench package:discover --ansi"
         ]
@@ -44,11 +46,11 @@
         }
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.5",
-        "orchestra/testbench": "^7.7",
+        "phpunit/phpunit": "^9.5|^10.0|^11.0",
+        "orchestra/testbench": "^7.7|^10.0",
         "friendsofphp/php-cs-fixer": "^3.10",
-        "nunomaduro/collision": "^6.3",
-        "pestphp/pest": "^1.22"
+        "nunomaduro/collision": "^6.3|^8.1",
+        "pestphp/pest": "^1.22|^3.0"
     },
     "config": {
         "allow-plugins": {
