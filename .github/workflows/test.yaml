@@ -1,6 +1,6 @@
 name: Test package
 
-on: [push, pull_request]
+on: [ push, pull_request ]
 
 jobs:
   build-and-test:
@@ -8,14 +8,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php: [8.2, 8.3, 8.4]
-        laravel: [11.*, 12.*]
-        stability: [prefer-lowest, prefer-stable]
-        include: 
-          - laravel: 11.*
-            testbench: 9.*
+        php: [ 8.3, 8.4, 8.5 ]
+        laravel: [ 12.*, 13.* ]
+        stability: [ prefer-lowest, prefer-stable ]
+        include:
           - laravel: 12.*
             testbench: 10.*
+          - laravel: 13.*
+            testbench: 11.*
 
     steps:
       - name: Checkout code

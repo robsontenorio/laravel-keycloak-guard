@@ -44,9 +44,8 @@
         }
     },
     "require-dev": {
-        "orchestra/testbench": "^10.6",
-        "nunomaduro/collision": "^8.8",
-        "pestphp/pest": "^3.8",
+        "orchestra/testbench": "^10|^11.0",
+        "pestphp/pest": "^3.0||^4.0",
         "laravel/pint": "^1.25"
     },
     "config": {
