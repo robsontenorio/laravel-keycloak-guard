@@ -26,6 +26,13 @@ class TestCase extends Orchestra
 
     protected User $user;
 
+    public function withKeycloakToken()
+    {
+        $this->withToken($this->token);
+
+        return $this;
+    }
+
     protected function setUp(): void
     {
         // Prepare credentials
@@ -43,13 +50,15 @@ class TestCase extends Orchestra
         ]);
     }
 
+    // Default configs to make it running
+
     protected function prepareCredentials(string $encryptionAlgorithm = 'RS256', ?array $openSSLConfig = null)
     {
         // Prepare private/public keys and a default JWT token, with a simple payload
         if (! $openSSLConfig) {
             $openSSLConfig = [
                 'digest_alg' => 'sha256',
-                'private_key_bits' => 1024,
+                'private_key_bits' => 2048,
                 'private_key_type' => OPENSSL_KEYTYPE_RSA,
             ];
         }
@@ -66,7 +75,6 @@ class TestCase extends Orchestra
         $this->token = JWT::encode($this->defaultPayload, $this->privateKey, $encryptionAlgorithm);
     }
 
-    // Default configs to make it running
     protected function defineEnvironment($app)
     {
         $app['config']->set('auth.defaults.guard', 'api');
@@ -96,6 +104,8 @@ class TestCase extends Orchestra
         });
     }
 
+    // Build a different token with custom payload
+
     protected function getPackageProviders($app)
     {
         Route::any('/foo/secret', 'KeycloakGuard\Tests\Controllers\FooController@secret')->middleware(Authenticate::class);
@@ -104,19 +114,12 @@ class TestCase extends Orchestra
         return [KeycloakGuardServiceProvider::class];
     }
 
-    // Build a different token with custom payload
+    // Setup default token, for the default user
+
     protected function buildCustomToken(array $payload, string $encryptionAlgorithm = 'RS256')
     {
         $payload = array_replace($this->defaultPayload, $payload);
 
         $this->token = JWT::encode($payload, $this->privateKey, $encryptionAlgorithm);
-    }
-
-    // Setup default token, for the default user
-    public function withKeycloakToken()
-    {
-        $this->withToken($this->token);
-
-        return $this;
     }
 }
