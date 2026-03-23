@@ -18,7 +18,7 @@ trait ActingAsKeycloakUser
 
         $token = $this->generateKeycloakToken($user, $payload);
 
-        $this->withHeader('Authorization', 'Bearer ' . $token);
+        $this->withHeader('Authorization', 'Bearer '.$token);
 
         return $this;
     }
