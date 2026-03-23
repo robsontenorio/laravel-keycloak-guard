@@ -9,11 +9,13 @@ jobs:
     strategy:
       matrix:
         php: [ 8.5 ]
-        laravel: [ 12.* ]
+        laravel: [ 12.*, 13.* ]
         stability: [ prefer-lowest, prefer-stable ]
         include:
           - laravel: 12.*
             testbench: 10.*
+          - laravel: 13.*
+            testbench: 11.*
 
     steps:
       - name: Checkout code
