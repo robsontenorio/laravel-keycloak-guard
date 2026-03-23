@@ -57,6 +57,5 @@ jobs:
       - name: Upload to Codecov
         uses: codecov/codecov-action@v5
         with:
-          token: ${{ secrets.CODE_COV_TOKEN }}
+          token: ${{ secrets.CODECOV_TOKEN }}
           files: .coverage/clover.xml
-          verbose: true
