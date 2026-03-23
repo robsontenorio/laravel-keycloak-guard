@@ -2,6 +2,4 @@
 
 namespace KeycloakGuard\Exceptions;
 
-class ResourceAccessNotAllowedException extends KeycloakGuardException
-{
-}
+class ResourceAccessNotAllowedException extends KeycloakGuardException {}

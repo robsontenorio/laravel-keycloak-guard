@@ -12,7 +12,7 @@ trait ActingAsKeycloakUser
     public function actingAsKeycloakUser($user = null, $payload = []): self
     {
         $principal = Config::get('keycloak.token_principal_attribute');
-        if (!$user && !isset($payload[$principal]) && !isset($this->jwtPayload[$principal])) {
+        if (! $user && ! isset($payload[$principal]) && ! isset($this->jwtPayload[$principal])) {
             Config::set('keycloak.load_user_from_database', false);
         }
 
@@ -28,7 +28,7 @@ trait ActingAsKeycloakUser
         $privateKey = openssl_pkey_new([
             'digest_alg' => 'sha256',
             'private_key_bits' => 1024,
-            'private_key_type' => OPENSSL_KEYTYPE_RSA
+            'private_key_type' => OPENSSL_KEYTYPE_RSA,
         ]);
 
         $publicKey = openssl_pkey_get_details($privateKey)['key'];

@@ -17,8 +17,11 @@ use Orchestra\Testbench\TestCase as Orchestra;
 class TestCase extends Orchestra
 {
     public OpenSSLAsymmetricKey $privateKey;
+
     public string $publicKey;
+
     public array $defaultPayload;
+
     public string $token;
 
     protected User $user;
@@ -36,18 +39,18 @@ class TestCase extends Orchestra
 
         // Default user, same as jwt token
         $this->user = UserFactory::new()->create([
-            'username' => 'johndoe'
+            'username' => 'johndoe',
         ]);
     }
 
     protected function prepareCredentials(string $encryptionAlgorithm = 'RS256', ?array $openSSLConfig = null)
     {
         // Prepare private/public keys and a default JWT token, with a simple payload
-        if (!$openSSLConfig) {
+        if (! $openSSLConfig) {
             $openSSLConfig = [
                 'digest_alg' => 'sha256',
                 'private_key_bits' => 1024,
-                'private_key_type' => OPENSSL_KEYTYPE_RSA
+                'private_key_type' => OPENSSL_KEYTYPE_RSA,
             ];
         }
 
@@ -57,7 +60,7 @@ class TestCase extends Orchestra
 
         $this->defaultPayload = [
             'preferred_username' => 'johndoe',
-            'resource_access' => ['myapp-backend' => []]
+            'resource_access' => ['myapp-backend' => []],
         ];
 
         $this->token = JWT::encode($this->defaultPayload, $this->privateKey, $encryptionAlgorithm);
@@ -71,7 +74,7 @@ class TestCase extends Orchestra
 
         $app['config']->set('auth.guards.api', [
             'driver' => 'keycloak',
-            'provider' => 'users'
+            'provider' => 'users',
         ]);
 
         $app['config']->set('keycloak', [

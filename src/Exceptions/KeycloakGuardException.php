@@ -2,7 +2,9 @@
 
 namespace KeycloakGuard\Exceptions;
 
-class KeycloakGuardException extends \UnexpectedValueException
+use UnexpectedValueException;
+
+class KeycloakGuardException extends UnexpectedValueException
 {
     public function __construct(string $message)
     {

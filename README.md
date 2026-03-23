@@ -1,12 +1,11 @@
 <p align="center">
   <img src="bird.png">
 </p>
-<p align="center">
-&nbsp;
-        <img src="https://img.shields.io/packagist/v/robsontenorio/laravel-keycloak-guard.svg" />
-        <img src="https://img.shields.io/packagist/dt/robsontenorio/laravel-keycloak-guard.svg" />
-      <img src="https://codecov.io/gh/robsontenorio/laravel-keycloak-guard/branch/master/graph/badge.svg?token=8ZpDarpss1"/>
 
+<p align="center">
+  <img src="https://img.shields.io/packagist/v/robsontenorio/laravel-keycloak-guard.svg" />
+  <img src="https://img.shields.io/packagist/dt/robsontenorio/laravel-keycloak-guard.svg" />
+  <img src="https://codecov.io/gh/robsontenorio/laravel-keycloak-guard/branch/master/graph/badge.svg?token=8ZpDarpss1"/>
 </p>
 
 # Simple Keycloak Guard for Laravel
@@ -43,10 +42,10 @@ This package helps you authenticate users on a Laravel API based on JWT tokens g
 
 1. The Laravel API (through `Keycloak Guard`) handle it.
 
-   - Verify token signature.
-   - Verify token structure.
-   - Verify token expiration time.
-   - Verify if my API allows `resource access` from token.
+    - Verify token signature.
+    - Verify token structure.
+    - Verify token expiration time.
+    - Verify if my API allows `resource access` from token.
 
 1. If everything is ok, then find the user on database and authenticate it on my API.
 
@@ -79,7 +78,6 @@ KEYCLOAK_ALLOWED_RESOURCES=my-api           # The JWT token must contain this re
 KEYCLOAK_LEEWAY=60                          # Optional, but solve some weird issues with timestamps from JWT token.
 ```
 
-
 ### Auth Guard
 
 Changes on `config/auth.php`
@@ -88,7 +86,7 @@ Changes on `config/auth.php`
 'defaults' => [
     'guard' => 'api',                 # <-- This
     'passwords' => 'users',
-],    
+],
 'guards' => [
     'api' => [
         'driver' => 'keycloak',       # <-- This
@@ -114,7 +112,6 @@ Route::group(['middleware' => 'auth:api'], function () {
     // more endpoints ...
 });
 ```
-
 
 # Configuration
 
@@ -155,17 +152,22 @@ It fetchs user from database and fill values into authenticated user object. If 
 _Default is `null`._
 _Expects the string name of your custom defined method in your custom user provider._
 
-If you have an `users` table and want it to be updated (creating or updating users) based on the token, you can inform a custom method on a custom UserProvider, that will be called instead `retrieveByCredentials` and will receive the complete decoded token as parameter, not just the credentials (as default).
-This will allow you to customize the way you want to interact with your database, before matching and delivering the authenticated user object, having all the information contained in the (valid) access token available. To read more about custom UserProviders, please check [Laravel's documentation about](https://laravel.com/docs/8.x/authentication#adding-custom-user-providers).
+If you have an `users` table and want it to be updated (creating or updating users) based on the token, you can inform a custom method on a custom UserProvider, that will be called
+instead `retrieveByCredentials` and will receive the complete decoded token as parameter, not just the credentials (as default).
+This will allow you to customize the way you want to interact with your database, before matching and delivering the authenticated user object, having all the information contained
+in the (valid) access token available. To read more about custom UserProviders, please
+check [Laravel's documentation about](https://laravel.com/docs/8.x/authentication#adding-custom-user-providers).
 
-If using this feature, the values defined for `user_provider_credential` and `token_principal_attribute` will be ignored. Requires 'load_user_from_database' to be true. Your custom method needs the parameters $token (an object) and $credentials (an associative array).
+If using this feature, the values defined for `user_provider_credential` and `token_principal_attribute` will be ignored. Requires 'load_user_from_database' to be true. Your custom
+method needs the parameters $token (an object) and $credentials (an associative array).
 
 ✔️ **user_provider_credential**
 
 _Required.
-Default is `username`._
+Default is `username`.
 
-The field from "users" table that contains the user unique identifier (eg. username, email, nickname). This will be confronted against `token_principal_attribute` attribute, while authenticating.
+The field from "users" table that contains the user unique identifier (eg. username, email, nickname). This will be confronted against `token_principal_attribute` attribute, while
+authenticating.
 
 ✔️ **token_principal_attribute**
 
@@ -179,13 +181,15 @@ This will be confronted against `user_provider_credential` attribute, while auth
 
 _Default is `false`._
 
-Appends to the authenticated user the full decoded JWT token (`$user->token`). Useful if you need to know roles, groups and other user info holded by JWT token. Even choosing `false`, you can also get it using `Auth::token()`, see API section.
+Appends to the authenticated user the full decoded JWT token (`$user->token`). Useful if you need to know roles, groups and other user info holded by JWT token. Even choosing
+`false`, you can also get it using `Auth::token()`, see API section.
 
 ✔️ **allowed_resources**
 
 _Required_.
 
-Usually you API should handle one _resource_access_. But, if you handle multiples, just use a comma separated list of allowed resources accepted by API. This attribute will be confronted against `resource_access` attribute from JWT token, while authenticating.
+Usually you API should handle one _resource_access_. But, if you handle multiples, just use a comma separated list of allowed resources accepted by API. This attribute will be
+confronted against `resource_access` attribute from JWT token, while authenticating.
 
 ✔️ **ignore_resources_validation**
 
@@ -197,7 +201,8 @@ Disables entirely resources validation. It will **ignore** _allowed_resources_ c
 
 _Default is `0`_.
 
-You can add a leeway to account for when there is a clock skew times between the signing and verifying servers. If you are facing issues like _"Cannot handle token prior to <DATE>"_ try to set it `60` (seconds).
+You can add a leeway to account for when there is a clock skew times between the signing and verifying servers. If you are facing issues like _"Cannot handle token prior
+to <DATE>"_ try to set it `60` (seconds).
 
 ✔️ **input_key**
 
@@ -213,7 +218,6 @@ By default this package **always** will look at first for a `Bearer` token. Addi
 GET  $this->get("/foo/secret?api_token=xxxxx")
 POST $this->post("/foo/secret", ["api_token" => "xxxxx"])
 ```
-
 
 # API
 
@@ -231,6 +235,7 @@ Simple Keycloak Guard implements `Illuminate\Contracts\Auth\Guard`. So, all Lara
 ## Keycloak Guard methods
 
 #### Token
+
 `token()`
 _Returns full decoded JWT token from authenticated user._
 
@@ -239,6 +244,7 @@ $token = Auth::token()  // or Auth::user()->token()
 ```
 
 #### Role
+
 `hasRole('some-resource', 'some-role')`
 _Check if authenticated user has a role on resource_access_
 
@@ -277,10 +283,12 @@ Auth::hasAnyRole('myapp-backend', ['myapp-frontend-role1', 'myapp-frontend-role2
 ```
 
 #### Scope
+
 Example decoded payload:
+
 ```json
 {
-    "scope": "scope-a scope-b scope-c",
+    "scope": "scope-a scope-b scope-c"
 }
 ```
 
@@ -314,7 +322,8 @@ Auth::hasAnyScope(['scope-f', 'scope-k']) // false
 
 ## Acting as a Keycloak user in tests
 
-As an equivalent feature like `$this->actingAs($user)` in Laravel, with this package you can use `KeycloakGuard\ActingAsKeycloakUser` trait in your test class and then use `actingAsKeycloakUser()` method to act as a user and somehow skip the Keycloak auth:
+As an equivalent feature like `$this->actingAs($user)` in Laravel, with this package you can use `KeycloakGuard\ActingAsKeycloakUser` trait in your test class and then use
+`actingAsKeycloakUser()` method to act as a user and somehow skip the Keycloak auth:
 
 ```php
 use KeycloakGuard\ActingAsKeycloakUser;
@@ -344,6 +353,7 @@ public test_a_protected_route()
       ->assertOk();
 }
 ```
+
 `$user` argument receives a string identifier or
 an Eloquent model, identifier of which is expected to be the property referred in **user_provider_credential** config.
 Whatever you pass in the payload will override default claims,
@@ -375,16 +385,54 @@ public test_a_protected_route()
 Priority is given to the claims in passed as an argument, so they will override ones in the class property.
 `$user` argument has the highest priority over the claim referred in **token_principal_attribute** config.
 
-# Contribute
+# Contributing
 
-You can run this project on VSCODE with Remote Container. Make sure you will use internal VSCODE terminal (inside running container).
+Run the clone at the root of your Laravel application.
 
-```bash
+```shell
+git clone git@github.com:robsontenorio/laravel-keycloak-guard.git packages/laravel-keycloak-guard
+```
+
+Add the local repo at your app `composer.json`.
+
+
+<!-- @formatter:off -->
+```shell
+composer config repositories.local '{"type": "path", "url": "/path/to/packages/laravel-keycloak-guard"}'  
+```
+<!-- @formatter:on -->
+
+Require the package using the local repo.
+
+```shell
+composer require robsontenorio/laravel-keycloak-guard:@dev
+```
+
+**Done!**
+
+In order to use the version from Packagist again, just remove the local repo and require the package again.
+
+```shell
+composer config --unset repositories.local
+composer robsontenorio/laravel-keycloak-guard
+```
+
+---
+
+Testing
+
+```shell
+# Enter in package folder
+cd /path/to/packages/laravel-keycloak-guard
+
+# Install dependencies
 composer install
+
+# Run tests
 composer test
+
+# Code coverage
 composer test:coverage
 ```
 
-# Contact
 
-Twitter [@robsontenorio](https://twitter.com/robsontenorio)
