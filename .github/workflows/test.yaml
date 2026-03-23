@@ -1,6 +1,12 @@
 name: Test package
 
-on: [ push, pull_request ]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
   build-and-test:
@@ -8,12 +14,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php: [ 8.5 ]
-        laravel: [ 12.* ]
+        php: [ 8.4, 8.5 ]
+        laravel: [ 12.*, 13.* ]
         stability: [ prefer-lowest, prefer-stable ]
         include:
           - laravel: 12.*
             testbench: 10.*
+          - laravel: 13.*
+            testbench: 11.*
 
     steps:
       - name: Checkout code
@@ -29,7 +37,7 @@ jobs:
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache Composer Dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ matrix.php }}-${{ matrix.laravel }}-${{ matrix.stability }}-${{ hashFiles('**/composer.lock') }}
@@ -47,8 +55,7 @@ jobs:
         run: composer test:coverage
 
       - name: Upload to Codecov
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v5
         with:
-          token: ${{ secrets.CODE_COV_TOKEN }}
+          token: ${{ secrets.CODECOV_TOKEN }}
           files: .coverage/clover.xml
-          verbose: true

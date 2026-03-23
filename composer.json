@@ -15,7 +15,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "firebase/php-jwt": "^6.11",
+        "firebase/php-jwt": "^7.0",
         "php": "^8.2",
         "ext-openssl": "*"
     },
@@ -45,8 +45,8 @@
     },
     "require-dev": {
         "orchestra/testbench": "^10|^11.0",
-        "pestphp/pest": "^3.0||^4.0",
-        "laravel/pint": "^1.25"
+        "pestphp/pest": "^4.4",
+        "laravel/pint": "^1.29"
     },
     "config": {
         "allow-plugins": {
