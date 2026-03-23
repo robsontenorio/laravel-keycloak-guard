@@ -2,6 +2,4 @@
 
 namespace KeycloakGuard\Exceptions;
 
-class TokenException extends KeycloakGuardException
-{
-}
+class TokenException extends KeycloakGuardException {}
