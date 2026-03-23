@@ -3,9 +3,15 @@
 </p>
 
 <p align="center">
+<a href="https://packagist.org/packages/robsontenorio/laravel-keycloak-guard/stats" target="_blank">
   <img src="https://img.shields.io/packagist/v/robsontenorio/laravel-keycloak-guard.svg" />
+</a>
+<a href="https://packagist.org/packages/robsontenorio/laravel-keycloak-guard/stats" target="_blank">
   <img src="https://img.shields.io/packagist/dt/robsontenorio/laravel-keycloak-guard.svg" />
+</a>
+<a href="https://app.codecov.io/gh/robsontenorio/laravel-keycloak-guard">
   <img src="https://codecov.io/gh/robsontenorio/laravel-keycloak-guard/branch/master/graph/badge.svg?token=8ZpDarpss1"/>
+</a>
 </p>
 
 # Simple Keycloak Guard for Laravel
@@ -26,7 +32,7 @@ This package helps you authenticate users on a Laravel API based on JWT tokens g
 
 ✔️ The frontend make requests to the Laravel API, with that token.
 
-💔 If your app does not match requirements, probably you are looking for https://socialiteproviders.com/Keycloak or https://github.com/Vizir/laravel-keycloak-web-guard
+❌ If your app does not match requirements, probably you are looking for https://socialiteproviders.com/Keycloak or https://github.com/Vizir/laravel-keycloak-web-guard
 
 # The flow
 
@@ -156,7 +162,7 @@ If you have an `users` table and want it to be updated (creating or updating use
 instead `retrieveByCredentials` and will receive the complete decoded token as parameter, not just the credentials (as default).
 This will allow you to customize the way you want to interact with your database, before matching and delivering the authenticated user object, having all the information contained
 in the (valid) access token available. To read more about custom UserProviders, please
-check [Laravel's documentation about](https://laravel.com/docs/8.x/authentication#adding-custom-user-providers).
+check [Laravel's documentation about](https://laravel.com/docs/13.x/authentication#adding-custom-user-providers).
 
 If using this feature, the values defined for `user_provider_credential` and `token_principal_attribute` will be ignored. Requires 'load_user_from_database' to be true. Your custom
 method needs the parameters $token (an object) and $credentials (an associative array).
