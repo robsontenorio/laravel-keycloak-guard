@@ -12,7 +12,9 @@ use KeycloakGuard\Exceptions\UserNotFoundException;
 use KeycloakGuard\KeycloakGuard;
 use KeycloakGuard\Tests\Extensions\CustomUserProvider;
 use KeycloakGuard\Tests\Factories\UserFactory;
+use KeycloakGuard\Tests\Factories\UuidUserFactory;
 use KeycloakGuard\Tests\Models\User;
+use KeycloakGuard\Tests\Models\UuidUser;
 use KeycloakGuard\Token;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -492,6 +494,26 @@ class AuthenticateTest extends TestCase
 
         $this->withKeycloakToken()->json('GET', '/foo/secret');
         $this->assertEquals($this->user->username, Auth::user()->username);
+    }
+
+    public function test_laravel_default_interface_for_authenticated_users_with_uuid_identifier()
+    {
+        $uuidUser = UuidUserFactory::new()->create([
+            'username' => 'johndoe-uuid',
+        ]);
+
+        config(['auth.providers.users.model' => UuidUser::class]);
+
+        $this->buildCustomToken([
+            'preferred_username' => 'johndoe-uuid',
+        ]);
+
+        $this->withKeycloakToken()->json('GET', '/foo/secret');
+
+        $this->assertEquals(Auth::hasUser(), true);
+        $this->assertEquals(Auth::guest(), false);
+        $this->assertIsString(Auth::id());
+        $this->assertEquals($uuidUser->id, Auth::id());
     }
 
     public static function scopeProvider(): array

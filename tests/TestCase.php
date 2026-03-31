@@ -102,6 +102,12 @@ class TestCase extends Orchestra
             $table->string('username');
             $table->timestamps();
         });
+
+        $app['db']->connection()->getSchemaBuilder()->create('uuid_users', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('username');
+            $table->timestamps();
+        });
     }
 
     // Build a different token with custom payload
