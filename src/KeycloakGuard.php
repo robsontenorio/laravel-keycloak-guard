@@ -13,6 +13,8 @@ use stdClass;
 
 class KeycloakGuard implements Guard
 {
+
+    
     protected mixed $config;
 
     protected ?Authenticatable $user = null;
