@@ -24,6 +24,10 @@ class KeycloakGuard implements Guard
         $this->config = config('keycloak');
 
         $this->authenticate();
+
+
+
+        
     }
 
     /**
