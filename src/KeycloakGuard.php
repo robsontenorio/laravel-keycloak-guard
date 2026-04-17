@@ -107,9 +107,9 @@ class KeycloakGuard implements Guard
     /**
      * Get the ID for the currently authenticated user.
      */
-    public function id(): ?int
+    public function id(): int|string|null
     {
-        return $this->user()?->id;
+        return $this->user()?->getAuthIdentifier();
     }
 
     /**
